@@ -227,7 +227,7 @@ TEST_F( EnergyPlusFixture, ReportSizingManager_RequestSizingSystem ) {
 	CurSysNum = 1;
 	FinalSysSizing.allocate( 1 );
 	FinalSysSizing( CurSysNum ).CoolSupTemp = 12.0;
-	FinalSysSizing( CurSysNum ).CoolSupHumRat = 0.0085;
+	FinalSysSizing( CurSysNum ).coolSupHumRat = 0.0085;
 	FinalSysSizing( CurSysNum ).MixTempAtCoolPeak = 28.0;
 	FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak = 0.0075;
 	FinalSysSizing( CurSysNum ).DesCoolVolFlow = 1.00;

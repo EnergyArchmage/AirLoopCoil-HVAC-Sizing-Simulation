@@ -180,6 +180,7 @@ namespace DataSizing {
 	extern int const CapacityPerFloorArea;
 	extern int const FractionOfAutosizedCoolingCapacity;
 	extern int const FractionOfAutosizedHeatingCapacity;
+	extern int const ConcurrentDeviceAdjustedCoolingCapacity;
 
 	// Plant Coincident sizing factor options
 	extern int const NoSizingFactorMode;
@@ -752,7 +753,7 @@ namespace DataSizing {
 		bool SystemCapacity; // TRUE if AirloopHVAC system heating capacity is calculated
 		bool DesignSizeFromParent; // TRUE if design size is set by parent object - normally false, set to true for special cases e.g. ERV
 		Array1D_int SizingMethod; // supply air flow rate sizing method (SupplyAirFlowRate, FlowPerFloorArea, FractionOfAutosizedCoolingAirflow and FractionOfAutosizedHeatingAirflow)
-		Array1D_int CapSizingMethod; // capacity sizing methods (HeatingDesignCapacity, CoolingDesignCapacity, CapacityPerFloorArea, FractionOfAutosizedCoolingCapacity and FractionOfAutosizedHeatingCapacity )
+		Array1D_int CapSizingMethod; // capacity sizing methods (HeatingDesignCapacity, CoolingDesignCapacity, CapacityPerFloorArea, FractionOfAutosizedCoolingCapacity, FractionOfAutosizedHeatingCapacity, and ConcurrentDeviceAdjustedCoolingCapacity )
 
 		// Default Constructor
 		ZoneEqSizingData() :
@@ -829,10 +830,12 @@ namespace DataSizing {
 		Real64 PreheatTemp; // preheat design set temperature [C]
 		Real64 PrecoolTemp; // precool design set temperature [C]
 		Real64 PreheatHumRat; // preheat design humidity ratio [kg water/kg dry air]
-		Real64 PrecoolHumRat; // precool design humidity ratio [kg water/kg dry air]
+		Real64 precoolHumRat; // precool design humidity ratio [kg water/kg dry air]
+		bool precoolHumRatWasAutosized; // true if precoolHumRat was set to autocalculate on input
 		Real64 CoolSupTemp; // cooling design supply air temperature [C]
 		Real64 HeatSupTemp; // heating design supply air temperature [C]
-		Real64 CoolSupHumRat; // cooling design supply air humidity ratio [kg water/kg dry air]
+		Real64 coolSupHumRat; // cooling design supply air humidity ratio [kg water/kg dry air]
+		bool coolSupHumRatWasAutosized; // true if coolSupHumRat was set to autocalculate on input
 		Real64 HeatSupHumRat; // heating design supply air humidity ratio [kg water/kg dry air]
 		int CoolAirDesMethod; // choice of how to get system cooling design air flow rates;
 		//  1 = calc from des day simulation; 2=m3/s per system, user input
@@ -872,10 +875,12 @@ namespace DataSizing {
 			PreheatTemp( 0.0 ),
 			PrecoolTemp( 0.0 ),
 			PreheatHumRat( 0.0 ),
-			PrecoolHumRat( 0.0 ),
+			precoolHumRat( 0.0 ),
+			precoolHumRatWasAutosized( false ),
 			CoolSupTemp( 0.0 ),
 			HeatSupTemp( 0.0 ),
-			CoolSupHumRat( 0.0 ),
+			coolSupHumRat( 0.0 ),
+			coolSupHumRatWasAutosized( false ),
 			HeatSupHumRat( 0.0 ),
 			CoolAirDesMethod( 0 ),
 			DesCoolAirFlow( 0.0 ),
@@ -920,10 +925,12 @@ namespace DataSizing {
 		Real64 PreheatTemp; // preheat design set temperature
 		Real64 PrecoolTemp; // precool design set temperature [C]
 		Real64 PreheatHumRat; // preheat design humidity ratio [kg water/kg dry air]
-		Real64 PrecoolHumRat; // precool design humidity ratio [kg water/kg dry air]
+		Real64 precoolHumRat; // precool design humidity ratio [kg water/kg dry air]
+		Real64 precoolHumRatWasAutosized; // true if precoolHumRat was set to autocalculate on input
 		Real64 CoolSupTemp; // cooling design supply air temperature [C]
 		Real64 HeatSupTemp; // heating design supply air temperature[C]
-		Real64 CoolSupHumRat; // cooling design supply air humidity ratio [kg water/kg dry air]
+		Real64 coolSupHumRat; // cooling design supply air humidity ratio [kg water/kg dry air]
+		bool coolSupHumRatWasAutosized;
 		Real64 HeatSupHumRat; // heating design supply air humidity ratio [kg water/kg dry air]
 		int CoolAirDesMethod; // choice of how to get system design cooling air flow rates;
 		//  1 = calc from des day simulation; 2=m3/s per system, user input
@@ -1036,10 +1043,12 @@ namespace DataSizing {
 			PreheatTemp( 0.0 ),
 			PrecoolTemp( 0.0 ),
 			PreheatHumRat( 0.0 ),
-			PrecoolHumRat( 0.0 ),
+			precoolHumRat( 0.0 ),
+			precoolHumRatWasAutosized( false ),
 			CoolSupTemp( 0.0 ),
 			HeatSupTemp( 0.0 ),
-			CoolSupHumRat( 0.0 ),
+			coolSupHumRat( 0.0 ),
+			coolSupHumRatWasAutosized( false ),
 			HeatSupHumRat( 0.0 ),
 			CoolAirDesMethod( 0 ),
 			HeatAirDesMethod( 0 ),

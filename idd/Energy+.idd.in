@@ -31492,9 +31492,11 @@ Sizing:System,
       \type real
       \units C
   N6, \field Precool Design Humidity Ratio
-      \required-field
       \type real
       \units kgWater/kgDryAir
+      \default 0.008
+      \autocalculatable
+      \note If autocalculate then SimulationControl must set Yes for Do HVAC Sizing Simulation for Sizing Periods
   N7, \field Central Cooling Design Supply Air Temperature
       \required-field
       \type real
@@ -31519,10 +31521,11 @@ Sizing:System,
       \key No
       \default No
   N9, \field Central Cooling Design Supply Air Humidity Ratio
-      \required-field
       \type real
-      \default 0.008
       \units kgWater/kgDryAir
+      \default 0.008
+      \autocalculatable
+      \note If autocalculate then SimulationControl must set Yes for Do HVAC Sizing Simulation for Sizing Periods
  N10, \field Central Heating Design Supply Air Humidity Ratio
       \required-field
       \type real
@@ -31621,9 +31624,10 @@ Sizing:System,
       \key CoolingDesignCapacity
       \key CapacityPerFloorArea
       \key FractionOfAutosizedCoolingCapacity
+      \key ConcurrentDeviceAdjustedCoolingCapacity
       \default CoolingDesignCapacity
       \note Enter the method used to determine the system cooling design capacity for scalable sizing.
-      \note None is used when a cooling coils is not included in an airloop or this field may be blank.
+      \note None is used when a cooling coil is not included in an airloop or this field may be blank.
       \note If this input field is left blank, then the design cooling capacity is set to zero.
       \note CoolingDesignCapacity => selected when the design cooling capacity value is specified or
       \note auto-sized. CapacityPerFloorArea => selected when the design cooling capacity is determined
@@ -31631,6 +31635,9 @@ Sizing:System,
       \note served by an airloop. FractionOfAutosizedCoolingCapacity => is selected when the design
       \note cooling capacity is determined from a user specified fraction and the auto-sized design
       \note cooling capacity of the system.
+      \note ConcurrentDeviceAdjustedCoolingCapacity triggers an advanced sizing method that uses HVAC Sizing Simulation
+      \note to adjust the coil inlet conditions used for cooling coil capacity sizing and  
+      \note SimulationControl must set Yes for Do HVAC Sizing Simulation for Sizing Periods.
  N21, \field Cooling Design Capacity
       \type real
       \units W

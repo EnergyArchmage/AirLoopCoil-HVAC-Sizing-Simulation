@@ -106,7 +106,7 @@ namespace EnergyPlus {
 		FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak = 0.090;
 		FinalSysSizing( CurSysNum ).DesMainVolFlow = 1.60894;
 		FinalSysSizing( CurSysNum ).HeatMixHumRat = 0.05;
-		FinalSysSizing( CurSysNum ).CoolSupHumRat = 0.07;
+		FinalSysSizing( CurSysNum ).coolSupHumRat = 0.07;
 		FinalSysSizing( CurSysNum ).HeatSupHumRat = 0.10;
 
 		// autosize nominal gas use rate
@@ -141,7 +141,7 @@ namespace EnergyPlus {
 		FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak = 0.090;
 		FinalSysSizing( CurSysNum ).DesMainVolFlow = 1.60894;
 		FinalSysSizing( CurSysNum ).HeatMixHumRat = 0.05;
-		FinalSysSizing( CurSysNum ).CoolSupHumRat = 0.07;
+		FinalSysSizing( CurSysNum ).coolSupHumRat = 0.07;
 		FinalSysSizing( CurSysNum ).HeatSupHumRat = 0.10;
 
 		OutBaroPress = 101325.0;
@@ -182,7 +182,7 @@ namespace EnergyPlus {
 		FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak = 0.00089;
 		FinalSysSizing( CurSysNum ).DesMainVolFlow = 1.60894;
 		FinalSysSizing( CurSysNum ).HeatMixHumRat = 0.05;
-		FinalSysSizing( CurSysNum ).CoolSupHumRat = 0.07;
+		FinalSysSizing( CurSysNum ).coolSupHumRat = 0.07;
 		FinalSysSizing( CurSysNum ).HeatSupHumRat = 0.10;
 
 		// resize the humidifier nominal capacity and gas use rate
@@ -273,7 +273,7 @@ namespace EnergyPlus {
 		FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak = 0.00089;
 		FinalSysSizing( CurSysNum ).DesMainVolFlow = 1.60894;
 		FinalSysSizing( CurSysNum ).HeatMixHumRat = 0.05;
-		FinalSysSizing( CurSysNum ).CoolSupHumRat = 0.07;
+		FinalSysSizing( CurSysNum ).coolSupHumRat = 0.07;
 		FinalSysSizing( CurSysNum ).HeatSupHumRat = 0.10;
 
 		// calculate gas use rate and energy at full load

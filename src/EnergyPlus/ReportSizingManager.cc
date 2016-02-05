@@ -1469,17 +1469,17 @@ namespace ReportSizingManager {
 								OutAirFrac = 1.0;
 							}
 							OutAirFrac = min( 1.0, max( 0.0, OutAirFrac ) );
-							AutosizeDes = OutAirFrac * FinalSysSizing( CurSysNum ).PrecoolHumRat + ( 1.0 - OutAirFrac ) * FinalSysSizing( CurSysNum ).RetHumRatAtCoolPeak;
+							AutosizeDes = OutAirFrac * FinalSysSizing( CurSysNum ).precoolHumRat + ( 1.0 - OutAirFrac ) * FinalSysSizing( CurSysNum ).RetHumRatAtCoolPeak;
 						}
 					}
 					bCheckForZero = false;
 				} else if ( SizingType == CoolingWaterDesAirOutletHumRatSizing ) {
 					if ( CurOASysNum > 0 ) {
-						AutosizeDes = FinalSysSizing( CurSysNum ).PrecoolHumRat;
+						AutosizeDes = FinalSysSizing( CurSysNum ).precoolHumRat;
 					} else if ( DataDesOutletAirHumRat > 0.0 ) {
 						AutosizeDes = DataDesOutletAirHumRat;
 					} else {
-						AutosizeDes = FinalSysSizing( CurSysNum ).CoolSupHumRat;
+						AutosizeDes = FinalSysSizing( CurSysNum ).coolSupHumRat;
 					}
 					if ( AutosizeDes > DataDesInletAirHumRat && DataCapacityUsedForSizing > 0.0 && SameString( CompType, "COIL:COOLING:WATER" ) ) { // flow here is water vol flow rate
 						ShowWarningError( CallingRoutine + ":" + " Coil=\"" + CompName + "\", Cooling Coil has leaving humidity ratio > entering humidity ratio." );
@@ -1576,7 +1576,7 @@ namespace ReportSizingManager {
 								CoilInTemp = FinalSysSizing ( CurSysNum ).OutTempAtCoolPeak;
 								CoilInHumRat = FinalSysSizing ( CurSysNum ).OutHumRatAtCoolPeak;
 								CoilOutTemp = FinalSysSizing ( CurSysNum ).PrecoolTemp;
-								CoilOutHumRat = FinalSysSizing ( CurSysNum ).PrecoolHumRat;
+								CoilOutHumRat = FinalSysSizing ( CurSysNum ).precoolHumRat;
 							} else { // coil is on the main air loop
 								if ( DataAirFlowUsedForSizing > 0.0 ) {
 									DesVolFlow = DataAirFlowUsedForSizing;
@@ -1586,7 +1586,7 @@ namespace ReportSizingManager {
 								} else {
 								CoilOutTemp = FinalSysSizing ( CurSysNum ).CoolSupTemp;
 								}
-								CoilOutHumRat = FinalSysSizing ( CurSysNum ).CoolSupHumRat;
+								CoilOutHumRat = FinalSysSizing ( CurSysNum ).coolSupHumRat;
 								if ( PrimaryAirSystem( CurSysNum ).NumOACoolCoils == 0 ) { // there is no precooling of the OA stream
 									CoilInTemp = FinalSysSizing ( CurSysNum ).MixTempAtCoolPeak;
 									CoilInHumRat = FinalSysSizing ( CurSysNum ).MixHumRatAtCoolPeak;
@@ -1598,7 +1598,7 @@ namespace ReportSizingManager {
 									}
 									OutAirFrac = min( 1.0, max( 0.0, OutAirFrac ) );
 									CoilInTemp = OutAirFrac * FinalSysSizing ( CurSysNum ).PrecoolTemp + ( 1.0 - OutAirFrac ) * FinalSysSizing ( CurSysNum ).RetTempAtCoolPeak;
-									CoilInHumRat = OutAirFrac*FinalSysSizing ( CurSysNum ).PrecoolHumRat + ( 1.0 - OutAirFrac )*FinalSysSizing ( CurSysNum ).RetHumRatAtCoolPeak;
+									CoilInHumRat = OutAirFrac*FinalSysSizing ( CurSysNum ).precoolHumRat + ( 1.0 - OutAirFrac )*FinalSysSizing ( CurSysNum ).RetHumRatAtCoolPeak;
 								}
 							}
 							OutTemp = FinalSysSizing ( CurSysNum ).OutTempAtCoolPeak;

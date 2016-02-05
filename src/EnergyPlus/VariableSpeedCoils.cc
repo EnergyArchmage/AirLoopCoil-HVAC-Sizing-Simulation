@@ -3139,10 +3139,10 @@ namespace VariableSpeedCoils {
 						MixTemp = FinalSysSizing( CurSysNum ).OutTempAtCoolPeak;
 						MixHumRat = FinalSysSizing( CurSysNum ).OutHumRatAtCoolPeak;
 						SupTemp = FinalSysSizing( CurSysNum ).PrecoolTemp;
-						SupHumRat = FinalSysSizing( CurSysNum ).PrecoolHumRat;
+						SupHumRat = FinalSysSizing( CurSysNum ).precoolHumRat;
 					} else { // coil is on the main air loop
 						SupTemp = FinalSysSizing( CurSysNum ).CoolSupTemp;
-						SupHumRat = FinalSysSizing( CurSysNum ).CoolSupHumRat;
+						SupHumRat = FinalSysSizing( CurSysNum ).coolSupHumRat;
 						if ( PrimaryAirSystem( CurSysNum ).NumOACoolCoils == 0 ) { // there is no precooling of the OA stream
 							MixTemp = FinalSysSizing( CurSysNum ).MixTempAtCoolPeak;
 							MixHumRat = FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak;
@@ -3154,7 +3154,7 @@ namespace VariableSpeedCoils {
 							}
 							OutAirFrac = min( 1.0, max( 0.0, OutAirFrac ) );
 							MixTemp = OutAirFrac * FinalSysSizing( CurSysNum ).PrecoolTemp + ( 1.0 - OutAirFrac ) * FinalSysSizing( CurSysNum ).RetTempAtCoolPeak;
-							MixHumRat = OutAirFrac * FinalSysSizing( CurSysNum ).PrecoolHumRat + ( 1.0 - OutAirFrac ) * FinalSysSizing( CurSysNum ).RetHumRatAtCoolPeak;
+							MixHumRat = OutAirFrac * FinalSysSizing( CurSysNum ).precoolHumRat + ( 1.0 - OutAirFrac ) * FinalSysSizing( CurSysNum ).RetHumRatAtCoolPeak;
 						}
 					}
 					OutTemp = FinalSysSizing( CurSysNum ).OutTempAtCoolPeak;

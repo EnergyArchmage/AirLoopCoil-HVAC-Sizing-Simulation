@@ -190,6 +190,7 @@ namespace DataSizing {
 	int const CapacityPerFloorArea( 10 );
 	int const FractionOfAutosizedCoolingCapacity( 11 );
 	int const FractionOfAutosizedHeatingCapacity( 12 );
+	int const ConcurrentDeviceAdjustedCoolingCapacity( 13 );
 
 	int const NoSizingFactorMode( 101 );
 	int const GlobalHeatingSizingFactorMode( 102 );

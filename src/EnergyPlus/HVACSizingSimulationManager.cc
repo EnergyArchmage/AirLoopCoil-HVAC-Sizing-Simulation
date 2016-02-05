@@ -88,23 +88,22 @@ namespace EnergyPlus {
 
 	void HVACSizingSimulationManager::DetermineSizingAnalysesNeeded()
 	{
-		using DataSizing::PlantSizData;
-		using DataSizing::NumPltSizInput;
-		using DataSizing::Coincident;
 
 		//currently the only type of advanced sizing analysis available is for coincident plant sizing
 		// expect more specialized sizing analysis objects to be added, so minimizing code here and jump to a worker method once we know an instance is to be created.
 
 		//Loop over PlantSizData struct and find those plant loops that are to use coincident sizing
-		for ( int i = 1; i <= NumPltSizInput; ++i ) {
+		for ( int i = 1; i <= DataSizing::NumPltSizInput; ++i ) {
 
-			if ( PlantSizData(i).ConcurrenceOption == Coincident ) {
+			if ( DataSizing::PlantSizData(i).ConcurrenceOption == DataSizing::Coincident ) {
 
 				//create an instance of analysis object for each loop
-				CreateNewCoincidentPlantAnalysisObject( PlantSizData(i).PlantLoopName, i );
+				CreateNewCoincidentPlantAnalysisObject( DataSizing::PlantSizData(i).PlantLoopName, i );
 
 			}
 		}
+
+
 
 	}
 

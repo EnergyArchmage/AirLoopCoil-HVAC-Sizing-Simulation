@@ -2170,10 +2170,20 @@ namespace SizingManager {
 			SysSizInput( SysSizIndex ).PreheatTemp = rNumericArgs( iPreheatDesignTempNumericNum );
 			SysSizInput( SysSizIndex ).PreheatHumRat = rNumericArgs( iPreheatDesignHumRatNumericNum );
 			SysSizInput( SysSizIndex ).PrecoolTemp = rNumericArgs( iPrecoolDesignTempNumericNum );
-			SysSizInput( SysSizIndex ).PrecoolHumRat = rNumericArgs( iPrecoolDesignHumRatNumericNum );
+			SysSizInput( SysSizIndex ).precoolHumRat = rNumericArgs( iPrecoolDesignHumRatNumericNum );
+			if ( SysSizInput( SysSizIndex ).precoolHumRat == DataSizing::AutoSize ) {
+				SysSizInput( SysSizIndex ).precoolHumRatWasAutosized = true;
+				SysSizInput( SysSizIndex ).precoolHumRat == 0.008;  // set to default, for first trial
+				// check if HVAC Sizing Simulation 
+			}
 			SysSizInput( SysSizIndex ).CoolSupTemp = rNumericArgs( iCentralCoolDesignSATempNumericNum );
 			SysSizInput( SysSizIndex ).HeatSupTemp = rNumericArgs( iCentralHeatDesignSATempNumericNum );
-			SysSizInput( SysSizIndex ).CoolSupHumRat = rNumericArgs( iCentralCoolDesignSAHumRatNumericNum );
+			SysSizInput( SysSizIndex ).coolSupHumRat = rNumericArgs( iCentralCoolDesignSAHumRatNumericNum );
+			if ( SysSizInput( SysSizIndex ).coolSupHumRat == DataSizing::AutoSize ) {
+				SysSizInput( SysSizIndex ).coolSupHumRatWasAutosized = true;
+				SysSizInput( SysSizIndex ).coolSupHumRat = 0.008;  // set to default, for first trial
+			}
+
 			SysSizInput( SysSizIndex ).HeatSupHumRat = rNumericArgs( iCentralHeatDesignSAHumRatNumericNum );
 			//  N11, \field Cooling Design Air Flow Rate
 			//      \note This input is used if Cooling Design Air Flow Method is Flow/System
@@ -2355,6 +2365,14 @@ namespace SizingManager {
 			} else if ( SameString( cAlphaArgs( iCoolCAPMAlphaNum ), "NONE" ) ) {
 				SysSizInput( SysSizIndex ).CoolingCapMethod = None;
 				SysSizInput( SysSizIndex ).ScaledCoolingCapacity = 0.0;
+			} else if ( SameString( cAlphaArgs( iCoolCAPMAlphaNum ), "ConcurrentDeviceAdjustedCoolingCapacity" ) ) {
+				SysSizInput( SysSizIndex ).CoolingCapMethod = DataSizing::ConcurrentDeviceAdjustedCoolingCapacity;
+				SysSizInput( SysSizIndex ).ScaledCoolingCapacity = rNumericArgs( iCoolDesignCapacityNumericNum );
+				if ( SysSizInput( SysSizIndex ).ScaledCoolingCapacity < 0.0 && SysSizInput( SysSizIndex ).ScaledCoolingCapacity != AutoSize ) {
+					ShowSevereError( cCurrentModuleObject + " = " + SysSizInput( SysSizIndex ).AirPriLoopName );
+					ShowContinueError( "Illegal " + cNumericFieldNames( iCoolDesignCapacityNumericNum ) + " = " + TrimSigDigits( rNumericArgs( iCoolDesignCapacityNumericNum ), 7 ) );
+					ErrorsFound = true;
+				}
 			} else {
 				ShowSevereError( cCurrentModuleObject + "=\"" + cAlphaArgs( iNameAlphaNum ) + "\", invalid data." );
 				ShowContinueError( "... incorrect " + cAlphaFieldNames( iCoolCAPMAlphaNum ) + "=\"" + cAlphaArgs( iCoolCAPMAlphaNum ) + "\"." );

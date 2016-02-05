@@ -753,7 +753,7 @@ namespace Humidifiers {
 							AirDensity = PsyRhoAirFnPbTdbW( OutBaroPress, OutDryBulbTemp, OutHumRat, CalledFrom );
 							MassFlowDes = FinalSysSizing( CurSysNum ).DesOutAirVolFlow * AirDensity;
 							InletHumRatDes = std::min( FinalSysSizing( CurSysNum ).OutHumRatAtCoolPeak, FinalSysSizing( CurSysNum ).HeatOutHumRat );
-							OutletHumRatDes = std::max( FinalSysSizing( CurSysNum ).CoolSupHumRat, FinalSysSizing( CurSysNum ).HeatSupHumRat );
+							OutletHumRatDes = std::max( FinalSysSizing( CurSysNum ).coolSupHumRat, FinalSysSizing( CurSysNum ).HeatSupHumRat );
 						} else {	// ELSE size to supply air duct flow rate
 							auto const SELECT_CASE_var( CurDuctType );
 							if ( SELECT_CASE_var == Main ) {
@@ -770,7 +770,7 @@ namespace Humidifiers {
 							AirDensity = PsyRhoAirFnPbTdbW( OutBaroPress, FinalSysSizing( CurSysNum ).MixTempAtCoolPeak, FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak, CalledFrom );
 							MassFlowDes = AirVolFlow * AirDensity;
 							InletHumRatDes = min( FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak, FinalSysSizing( CurSysNum ).HeatMixHumRat);
-							OutletHumRatDes = max( FinalSysSizing( CurSysNum ).CoolSupHumRat, FinalSysSizing( CurSysNum ).HeatSupHumRat);
+							OutletHumRatDes = max( FinalSysSizing( CurSysNum ).coolSupHumRat, FinalSysSizing( CurSysNum ).HeatSupHumRat);
 						}
 					} else {
 						auto const SELECT_CASE_var( CurDuctType );
@@ -788,7 +788,7 @@ namespace Humidifiers {
 						AirDensity = PsyRhoAirFnPbTdbW( OutBaroPress, FinalSysSizing( CurSysNum ).MixTempAtCoolPeak, FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak, CalledFrom );
 						MassFlowDes = AirVolFlow * AirDensity;
 						InletHumRatDes = std::min( FinalSysSizing( CurSysNum ).MixHumRatAtCoolPeak, FinalSysSizing( CurSysNum ).HeatMixHumRat );
-						OutletHumRatDes = std::max( FinalSysSizing( CurSysNum ).CoolSupHumRat, FinalSysSizing( CurSysNum ).HeatSupHumRat);
+						OutletHumRatDes = std::max( FinalSysSizing( CurSysNum ).coolSupHumRat, FinalSysSizing( CurSysNum ).HeatSupHumRat);
 					}
 				}
 			}
