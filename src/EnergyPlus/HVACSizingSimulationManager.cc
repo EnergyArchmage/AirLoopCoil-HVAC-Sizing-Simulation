@@ -92,10 +92,21 @@ namespace EnergyPlus {
 		//currently the only type of advanced sizing analysis available is for coincident plant sizing
 		// expect more specialized sizing analysis objects to be added, so minimizing code here and jump to a worker method once we know an instance is to be created.
 
+		// loop over SysSizInput struct and find air systems that are to use advanced sizing
+
+		for ( int i = 1; i <= DataSizing::NumSysSizInput; ++i ) {
+		
+			if ( DataSizing::SysSizInput( i ).precoolHumRatWasAutosized ) {
+			
+			}
+		
+		}
+
+
 		//Loop over PlantSizData struct and find those plant loops that are to use coincident sizing
 		for ( int i = 1; i <= DataSizing::NumPltSizInput; ++i ) {
 
-			if ( DataSizing::PlantSizData(i).ConcurrenceOption == DataSizing::Coincident ) {
+			if ( DataSizing::PlantSizData( i ).ConcurrenceOption == DataSizing::Coincident ) {
 
 				//create an instance of analysis object for each loop
 				CreateNewCoincidentPlantAnalysisObject( DataSizing::PlantSizData(i).PlantLoopName, i );
@@ -112,31 +123,34 @@ namespace EnergyPlus {
 		int const PlantSizingIndex
 	)
 	{
-		using DataPlant::PlantLoop;
-		using DataPlant::TotNumLoops;
-		using DataPlant::SupplySide;
-		using DataGlobals::InitConvTemp;
-		using namespace FluidProperties;
-		using DataSizing::PlantSizData;
-
 		Real64 density;
 		Real64 cp;
 
 		//find plant loop number
-		for ( int i = 1; i <= TotNumLoops; ++i ) {
-			if ( PlantLoopName == PlantLoop( i ).Name ) { //found it
+		for ( int i = 1; i <= DataPlant::TotNumLoops; ++i ) {
+			if ( PlantLoopName == DataPlant::PlantLoop( i ).Name ) { //found it
 
-				density = GetDensityGlycol( PlantLoop( i ).FluidName,
-								InitConvTemp, PlantLoop( i ).FluidIndex,
+				density = FluidProperties::GetDensityGlycol( DataPlant::PlantLoop( i ).FluidName,
+								DataGlobals::InitConvTemp, DataPlant::PlantLoop( i ).FluidIndex,
 								"createNewCoincidentPlantAnalysisObject" );
-				cp = GetSpecificHeatGlycol( PlantLoop( i ).FluidName,
-								InitConvTemp, PlantLoop( i ).FluidIndex,
+				cp = FluidProperties::GetSpecificHeatGlycol( DataPlant::PlantLoop( i ).FluidName,
+								DataGlobals::InitConvTemp, DataPlant::PlantLoop( i ).FluidIndex,
 								"createNewCoincidentPlantAnalysisObject" );
 
-				plantCoincAnalyObjs.emplace_back( PlantLoopName, i, PlantLoop( i ).LoopSide( SupplySide ).NodeNumIn, density,
-					cp, PlantSizData( PlantSizingIndex ).NumTimeStepsInAvg, PlantSizingIndex );
+				plantCoincAnalyObjs.emplace_back( PlantLoopName, i, DataPlant::PlantLoop( i ).LoopSide( DataPlant::SupplySide ).NodeNumIn, density,
+					cp, DataSizing::PlantSizData( PlantSizingIndex ).NumTimeStepsInAvg, PlantSizingIndex );
 			}
 		}
+	}
+
+	void HVACSizingSimulationManager::createNewAirLoopCoilSizingAnalysisObject(
+		std::string const & AirLoopName, 
+		int const SystemSizingIndex
+	) 
+	{
+		// find air loop index
+
+	
 	}
 
 	void HVACSizingSimulationManager::SetupSizingAnalyses()

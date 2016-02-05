@@ -484,7 +484,9 @@ namespace EnergyPlus {
 		}
 	}
 
-	PlantCoinicidentAnalysis::PlantCoinicidentAnalysis(
+
+
+	PlantCoincidentAnalysis::PlantCoincidentAnalysis(
 		std::string loopName,
 		int loopIndex,
 		int nodeNum,
@@ -504,7 +506,7 @@ namespace EnergyPlus {
 	}
 
 
-	void PlantCoinicidentAnalysis::ResolveDesignFlowRate(
+	void PlantCoincidentAnalysis::ResolveDesignFlowRate(
 		int const HVACSizingIterCount
 	)
 	{
@@ -687,7 +689,7 @@ namespace EnergyPlus {
 		}
 	}
 
-	bool PlantCoinicidentAnalysis::CheckTimeStampForNull(
+	bool PlantCoincidentAnalysis::CheckTimeStampForNull(
 		ZoneTimestepObject testStamp
 	)
 	{
@@ -703,4 +705,6 @@ namespace EnergyPlus {
 
 		return isNull;
 	}
+
+
 }

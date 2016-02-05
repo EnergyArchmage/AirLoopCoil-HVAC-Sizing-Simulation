@@ -93,8 +93,10 @@ class HVACSizingSimulationManager
 {
 public:
 
-	std::vector< PlantCoinicidentAnalysis > plantCoincAnalyObjs;
+	std::vector< PlantCoincidentAnalysis > plantCoincAnalyObjs;
 	bool plantCoinAnalyRequestsAnotherIteration;
+
+	std::vector< > 
 
 	SizingLoggerFramework sizingLogger;
 
@@ -115,6 +117,11 @@ private:
 	void CreateNewCoincidentPlantAnalysisObject(
 		std::string const & PlantLoopName,
 		int const PlantSizingIndex
+	);
+
+	void createNewAirLoopCoilSizingAnalysisObject(
+		std::string const & AirLoopName, 
+		int const SystemSizingIndex
 	);
 
 };

@@ -190,7 +190,7 @@ private:
 };
 
 
-class  PlantCoinicidentAnalysis
+class PlantCoincidentAnalysis
 {
 public:
 
@@ -213,7 +213,7 @@ public:
 	Real64 peakDemandReturnTemp;
 	Real64 peakDemandMassFlow;
 
-	PlantCoinicidentAnalysis(
+	PlantCoincidentAnalysis(
 		std::string loopName,
 		int loopIndex,
 		int nodeNum,
@@ -240,6 +240,22 @@ private:
 	bool CheckTimeStampForNull(
 		ZoneTimestepObject testStamp
 	);
+};
+
+
+class AirLoopCoolingCoilAdvancedSizing
+{
+	public:
+
+	AirLoopCoolingCoilAdvancedSizing (
+ 		std::string const AirLoopName,
+		int const AirLoopIndex,
+
+ 
+	);
+
+
+
 };
 
 }

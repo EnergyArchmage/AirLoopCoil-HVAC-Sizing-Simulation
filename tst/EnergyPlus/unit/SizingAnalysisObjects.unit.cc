@@ -397,7 +397,7 @@ TEST_F( SizingAnalysisObjectsTest, PlantCoincidentAnalyObjTest )
 	timestepsInAvg = 1;
 	plantSizingIndex = 1;
 
-	PlantCoinicidentAnalysis TestAnalysisObj(
+	PlantCoincidentAnalysis TestAnalysisObj(
 		loopName,
 		loopNum,
 		nodeNum,
