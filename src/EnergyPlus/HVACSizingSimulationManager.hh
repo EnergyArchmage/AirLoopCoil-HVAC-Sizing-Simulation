@@ -96,8 +96,18 @@ public:
 	std::vector< PlantCoincidentAnalysis > plantCoincAnalyObjs;
 	bool plantCoinAnalyRequestsAnotherIteration;
 
-	std::vector< > 
+	std::vector< AirLoopMainCoolingCoilLeavingHumRatAnalysis > mainCCoilLvHumRatAnalyObjs;
+	bool mainCCoilLvHumRatAnalyRequestsAnotherIteration;
 
+	std::vector< AirLoopOutdoorAirCoolingCoilLeavingHumRatAnalysis > oACoilLvHumRatAnalyObjs;
+	bool oACoilLvHumRatAnalyRequestsAnotherIteration;
+
+	std::vector< AirLoopMainCoolingCoilInletConditionsAnalysis > mainCCoilConcurrentInletAnalyObjs;
+	bool mainCCoilConcurrentInletAnalyRequestsAnotherIteration;
+
+	std::vector< AirLoopOutdoorAirCoolingCoilInletConditionsAnalysis > oACoilConcurrentInletAnalyObj;
+	bool oACoilConcurrentInletAnalyRequestsAnotherIteration;
+	
 	SizingLoggerFramework sizingLogger;
 
 	void DetermineSizingAnalysesNeeded();

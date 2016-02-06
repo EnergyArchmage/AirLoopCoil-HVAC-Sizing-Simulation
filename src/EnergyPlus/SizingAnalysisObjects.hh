@@ -242,19 +242,84 @@ private:
 	);
 };
 
-
-class AirLoopCoolingCoilAdvancedSizing
+class AirLoopMainCoolingCoilLeavingHumRatAnalysis
 {
 	public:
+		int airLoopIndex = 0;
+		int sysSizingIndex = 0;
+		int coolingCoilOutletNodeIndex = 0;
+		int numTimeStepsInAvg = 0;
+		bool anotherIterationDesired = false;
 
-	AirLoopCoolingCoilAdvancedSizing (
- 		std::string const AirLoopName,
-		int const AirLoopIndex,
+	// constructor
+		AirLoopMainCoolingCoilLeavingHumRatAnalysis (
+ 			std::string const airLoopName,
+			int const loopIndex,
+			int const coilOutletNode,
+			int const sizingIndex
+		);
 
- 
-	);
+	private:
+		
+
+};
+
+class AirLoopOutdoorAirCoolingCoilLeavingHumRatAnalysis 
+{
+	public :
+		int airLoopIndex = 0;
+		int sysSizingIndex = 0;
+		int coolingCoilOutletNodeIndex = 0;
+		int numTimeStepsInAvg = 0;
+		bool anotherIterationDesired = false;
+
+		AirLoopOutdoorAirCoolingCoilLeavingHumRatAnalysis (
+ 			std::string const airLoopName,
+			int const loopIndex,
+			int const coilOutletNode,
+			int const sizingIndex
+		);
+
+	private :
+
+};
+
+class AirLoopMainCoolingCoilInletConditionsAnalysis
+{
+	public :
+		int airLoopIndex = 0;
+		int sysSizingIndex = 0;
+		int coolingCoilInletNodeIndex = 0;
+		int numTimeStepsInAvg = 0;
+
+		AirLoopMainCoolingCoilInletConditionsAnalysis (
+ 			std::string const airLoopName,
+			int const loopIndex,
+			int const coilInletNode,
+			int const sizingIndex
+		);
+
+	private :
+
+};
 
 
+class AirLoopOutdoorAirCoolingCoilInletConditionsAnalysis
+{
+	public :
+		int airLoopIndex = 0;
+		int sysSizingIndex = 0;
+		int coolingCoilInletNodeIndex = 0;
+		int numTimeStepsInAvg = 0;
+
+		AirLoopOutdoorAirCoolingCoilInletConditionsAnalysis (
+ 			std::string const airLoopName,
+			int const loopIndex,
+			int const coilInletNode,
+			int const sizingIndex
+		);
+
+	private :
 
 };
 

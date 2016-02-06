@@ -150,6 +150,11 @@ namespace EnergyPlus {
 	{
 		// find air loop index
 
+			// find coil
+
+			// find coil inlet node number
+
+			//find coil outlet node number
 	
 	}
 
