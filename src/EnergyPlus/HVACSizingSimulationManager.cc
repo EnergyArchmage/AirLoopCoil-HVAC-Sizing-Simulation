@@ -80,6 +80,7 @@
 #include <PlantManager.hh>
 #include <PlantPipingSystemsManager.hh>
 #include <SimulationManager.hh>
+#include <SizingAnalysisObjects.hh>
 #include <SQLiteProcedures.hh>
 #include <UtilityRoutines.hh>
 #include <WeatherManager.hh>

@@ -706,5 +706,14 @@ namespace EnergyPlus {
 		return isNull;
 	}
 
+	AirLoopSizingAnalsysis::AirLoopSizingAnalsysis( // constructor
+	 		std::string const airLoopName,
+			int const loopIndex,
+			int const sizingIndex,
+			SizingAnalysisTypeEnum analysisType
+		)
+		{
+		
+		}
 
 }
