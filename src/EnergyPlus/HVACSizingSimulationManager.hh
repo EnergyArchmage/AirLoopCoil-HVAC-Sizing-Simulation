@@ -96,17 +96,9 @@ public:
 	std::vector< PlantCoincidentAnalysis > plantCoincAnalyObjs;
 	bool plantCoinAnalyRequestsAnotherIteration;
 
-	std::vector< AirLoopMainCoolingCoilLeavingHumRatAnalysis > mainCCoilLvHumRatAnalyObjs;
-	bool mainCCoilLvHumRatAnalyRequestsAnotherIteration;
+	std::vector< AirLoopSizingAnalsysis > airLoopAdjustAnalyObjs;
+	bool airLoopSizingAdjustAnalyRequestsAnotherIteration;
 
-	std::vector< AirLoopOutdoorAirCoolingCoilLeavingHumRatAnalysis > oACoilLvHumRatAnalyObjs;
-	bool oACoilLvHumRatAnalyRequestsAnotherIteration;
-
-	std::vector< AirLoopMainCoolingCoilInletConditionsAnalysis > mainCCoilConcurrentInletAnalyObjs;
-	bool mainCCoilConcurrentInletAnalyRequestsAnotherIteration;
-
-	std::vector< AirLoopOutdoorAirCoolingCoilInletConditionsAnalysis > oACoilConcurrentInletAnalyObj;
-	bool oACoilConcurrentInletAnalyRequestsAnotherIteration;
 	
 	SizingLoggerFramework sizingLogger;
 
@@ -132,19 +124,9 @@ private:
 		int const PlantSizingIndex
 	);
 
-	void createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject(
-		std::string const & AirLoopName, 
-		int const SystemSizingIndex
-	);
-
-	void createNewAirLoopOutdoorAirCoolingCoilLeavingHumRatSizingAnalysisObject(
-		std::string const & AirLoopName, 
-		int const SystemSizingIndex
-	);
-
-	void createNewAirLoopCoolingCoilInletConditionsSizingAnalysisObject(
-		std::string const & AirLoopName, 
-		int const SystemSizingIndex
+	void createOrFindNewAirSizingAnalysisObject(
+		int const SystemSizingIndex,
+		AirLoopSizingAnalsysis::SizingAnalysisTypeEnum typeOfAnalysis
 	);
 
 

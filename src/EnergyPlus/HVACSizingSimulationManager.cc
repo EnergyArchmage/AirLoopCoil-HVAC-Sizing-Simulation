@@ -89,20 +89,22 @@ namespace EnergyPlus {
 	void HVACSizingSimulationManager::DetermineSizingAnalysesNeeded()
 	{
 
-		//currently the only type of advanced sizing analysis available is for coincident plant sizing
+		//currently the only types of advanced sizing analysis available are:
+		//		1. coincident plant sizing
+		//		2. central air system cooling coil adjustments
 		// expect more specialized sizing analysis objects to be added, so minimizing code here and jump to a worker method once we know an instance is to be created.
 
 		// loop over SysSizInput struct and find air systems that are to use advanced sizing
 
 		for ( int i = 1; i <= DataSizing::NumSysSizInput; ++i ) {
 			if ( DataSizing::SysSizInput( i ).precoolHumRatWasAutosized ) {
-				this->createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject( DataSizing::SysSizInput( i ).AirPriLoopName, i );
+				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::OutdoorAirCoolingCoilLeavingHumRat );
 			}
 			if ( DataSizing::SysSizInput( i ).coolSupHumRatWasAutosized ) {
-				this->createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject( DataSizing::SysSizInput( i ).AirPriLoopName, i );
+				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::MainCoolingCoilLeavingHumRat );
 			}
 			if ( DataSizing::SysSizInput( i ).CoolingCapMethod == DataSizing::ConcurrentDeviceAdjustedCoolingCapacity ) {
-				this->createNewAirLoopCoolingCoilInletConditionsSizingAnalysisObject( DataSizing::SysSizInput( i ).AirPriLoopName, i );
+				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::MainCoolingCoilInletConditions );
 			}
 		}
 
@@ -147,50 +149,34 @@ namespace EnergyPlus {
 		}
 	}
 
-	void HVACSizingSimulationManager::createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject(
-		std::string const & AirLoopName, 
-		int const SystemSizingIndex
+	void HVACSizingSimulationManager::createOrFindNewAirSizingAnalysisObject(
+		int const SystemSizingIndex,
+		AirLoopSizingAnalsysis::SizingAnalysisTypeEnum typeOfAnalysis
 	) 
 	{
-		// find air loop index
-
+		bool foundIt = false;
+		// first see if this airloop already has an advanced sizing object created
+		for ( auto & a : this->airLoopAdjustAnalyObjs ) {
+			if ( a.sysSizingIndex == SystemSizingIndex ) { // found it
+				a.typesOfSizingAdjustments.emplace_back( typeOfAnalysis );
+				foundIt = true;
+				return;
+			}
+		}		
+			// find air loop index
+		if ( ! foundIt ) {
 			// find coil
+			this->airLoopAdjustAnalyObjs.emplace_back( DataSizing::SysSizInput( SystemSizingIndex ).AirPriLoopName, DataSizing::SysSizInput( SystemSizingIndex ).AirLoopNum, SystemSizingIndex, typeOfAnalysis );
 
-			// find coil inlet node number
+		}
 
-			//find coil outlet node number
+
+
+
 	
 	}
 
-	void HVACSizingSimulationManager::createNewAirLoopOutdoorAirCoolingCoilLeavingHumRatSizingAnalysisObject(
-		std::string const & AirLoopName, 
-		int const SystemSizingIndex
-	) 
-	{
-		// find air loop index
 
-			// find coil
-
-			// find coil inlet node number
-
-			//find coil outlet node number
-	
-	}
-
-	void HVACSizingSimulationManager::createNewAirLoopCoolingCoilInletConditionsSizingAnalysisObject(
-		std::string const & AirLoopName, 
-		int const SystemSizingIndex
-	) 
-	{
-		// find air loop index
-
-			// find coil
-
-			// find coil inlet node number
-
-			//find coil outlet node number
-	
-	}
 
 	void HVACSizingSimulationManager::SetupSizingAnalyses()
 	{

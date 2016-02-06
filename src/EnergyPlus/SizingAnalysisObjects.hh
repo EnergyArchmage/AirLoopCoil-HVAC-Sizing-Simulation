@@ -242,98 +242,46 @@ private:
 	);
 };
 
-// base class for all AirLoop System Sizing advanced sizing using HVAC Sizing Simulations
+// class for AirLoop System Sizing advanced sizing using HVAC Sizing Simulations
 class AirLoopSizingAnalsysis
 {
-
-
-protected:
-
-		int airLoopIndex = 0;
-		int sysSizingIndex = 0;
-
-};
-
-class AirLoopMainCoolingCoilLeavingHumRatAnalysis
-{
 	public:
-		int airLoopIndex = 0;
-		int sysSizingIndex = 0;
-		int coolingCoilOutletNodeIndex = 0;
-		int numTimeStepsInAvg = 0;
+		enum SizingAnalysisTypeEnum {
+			MainCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the main cooling coil
+			MainCoolingCoilInletConditions, // modify the conditions entering the main cooling coil
+			OutdoorAirCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the outdoor air cooling coil
+			OutdoorAirCoolingCoilInletConditions // modify the conditions entering the outdoor air cooling coil
+		};
+
 		bool anotherIterationDesired = false;
-
-	// constructor
-		AirLoopMainCoolingCoilLeavingHumRatAnalysis (
- 			std::string const airLoopName,
-			int const loopIndex,
-			int const coilOutletNode,
-			int const sizingIndex
-		);
-
-	private:
-		
-
-};
-
-class AirLoopOutdoorAirCoolingCoilLeavingHumRatAnalysis 
-{
-	public :
-		int airLoopIndex = 0;
+		int airLoopIndex = 0; // points into array struct DataAirSystems::PrimaryAirSystem
 		int sysSizingIndex = 0;
-		int coolingCoilOutletNodeIndex = 0;
-		int numTimeStepsInAvg = 0;
-		bool anotherIterationDesired = false;
+		std::vector < SizingAnalysisTypeEnum > typesOfSizingAdjustments;
+protected: // data
 
-		AirLoopOutdoorAirCoolingCoilLeavingHumRatAnalysis (
+
+
+
+		int mainCoolingCoilOutletNodeIndex = 0; // first main cooling coil found on main branch.
+		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on branch
+		std::string mainCoolingCoilName  = "";
+
+		int oaColingCoilOutletNodeIndex = 0;
+		std::string oaColingCoilName = "";
+
+
+
+	public:
+		AirLoopSizingAnalsysis (  // constructor
  			std::string const airLoopName,
 			int const loopIndex,
-			int const coilOutletNode,
-			int const sizingIndex
+			int const sizingIndex,
+			SizingAnalysisTypeEnum analysisType
 		);
 
-	private :
 
 };
 
-class AirLoopMainCoolingCoilInletConditionsAnalysis
-{
-	public :
-		int airLoopIndex = 0;
-		int sysSizingIndex = 0;
-		int coolingCoilInletNodeIndex = 0;
-		int numTimeStepsInAvg = 0;
-
-		AirLoopMainCoolingCoilInletConditionsAnalysis (
- 			std::string const airLoopName,
-			int const loopIndex,
-			int const coilInletNode,
-			int const sizingIndex
-		);
-
-	private :
-
-};
-
-
-class AirLoopOutdoorAirCoolingCoilInletConditionsAnalysis
-{
-	public :
-		int airLoopIndex = 0;
-		int sysSizingIndex = 0;
-		int coolingCoilInletNodeIndex = 0;
-		int numTimeStepsInAvg = 0;
-
-		AirLoopOutdoorAirCoolingCoilInletConditionsAnalysis (
- 			std::string const airLoopName,
-			int const loopIndex,
-			int const coilInletNode,
-			int const sizingIndex
-		);
-
-	private :
-
-};
 
 }
 
