@@ -111,10 +111,13 @@ public:
 	SizingLoggerFramework sizingLogger;
 
 	void DetermineSizingAnalysesNeeded();
+
 	void SetupSizingAnalyses();
 
 	void RedoKickOffAndResize();
+
 	void PostProcessLogs();
+
 	void ProcessCoincidentPlantSizeAdjustments(
 		int const HVACSizingIterCount
 	);
@@ -129,10 +132,21 @@ private:
 		int const PlantSizingIndex
 	);
 
-	void createNewAirLoopCoilSizingAnalysisObject(
+	void createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject(
 		std::string const & AirLoopName, 
 		int const SystemSizingIndex
 	);
+
+	void createNewAirLoopOutdoorAirCoolingCoilLeavingHumRatSizingAnalysisObject(
+		std::string const & AirLoopName, 
+		int const SystemSizingIndex
+	);
+
+	void createNewAirLoopCoolingCoilInletConditionsSizingAnalysisObject(
+		std::string const & AirLoopName, 
+		int const SystemSizingIndex
+	);
+
 
 };
 

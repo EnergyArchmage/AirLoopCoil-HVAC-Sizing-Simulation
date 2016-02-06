@@ -486,7 +486,7 @@ namespace EnergyPlus {
 
 
 
-	PlantCoincidentAnalysis::PlantCoincidentAnalysis(
+	PlantCoincidentAnalysis::PlantCoincidentAnalysis( // constructor
 		std::string loopName,
 		int loopIndex,
 		int nodeNum,

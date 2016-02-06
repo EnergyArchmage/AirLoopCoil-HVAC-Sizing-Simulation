@@ -95,11 +95,15 @@ namespace EnergyPlus {
 		// loop over SysSizInput struct and find air systems that are to use advanced sizing
 
 		for ( int i = 1; i <= DataSizing::NumSysSizInput; ++i ) {
-		
 			if ( DataSizing::SysSizInput( i ).precoolHumRatWasAutosized ) {
-			
+				this->createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject( DataSizing::SysSizInput( i ).AirPriLoopName, i );
 			}
-		
+			if ( DataSizing::SysSizInput( i ).coolSupHumRatWasAutosized ) {
+				this->createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject( DataSizing::SysSizInput( i ).AirPriLoopName, i );
+			}
+			if ( DataSizing::SysSizInput( i ).CoolingCapMethod == DataSizing::ConcurrentDeviceAdjustedCoolingCapacity ) {
+				this->createNewAirLoopCoolingCoilInletConditionsSizingAnalysisObject( DataSizing::SysSizInput( i ).AirPriLoopName, i );
+			}
 		}
 
 
@@ -109,7 +113,7 @@ namespace EnergyPlus {
 			if ( DataSizing::PlantSizData( i ).ConcurrenceOption == DataSizing::Coincident ) {
 
 				//create an instance of analysis object for each loop
-				CreateNewCoincidentPlantAnalysisObject( DataSizing::PlantSizData(i).PlantLoopName, i );
+				this->CreateNewCoincidentPlantAnalysisObject( DataSizing::PlantSizData(i).PlantLoopName, i );
 
 			}
 		}
@@ -143,7 +147,37 @@ namespace EnergyPlus {
 		}
 	}
 
-	void HVACSizingSimulationManager::createNewAirLoopCoilSizingAnalysisObject(
+	void HVACSizingSimulationManager::createNewAirLoopMainCoolingCoilLeavingHumRatSizingAnalysisObject(
+		std::string const & AirLoopName, 
+		int const SystemSizingIndex
+	) 
+	{
+		// find air loop index
+
+			// find coil
+
+			// find coil inlet node number
+
+			//find coil outlet node number
+	
+	}
+
+	void HVACSizingSimulationManager::createNewAirLoopOutdoorAirCoolingCoilLeavingHumRatSizingAnalysisObject(
+		std::string const & AirLoopName, 
+		int const SystemSizingIndex
+	) 
+	{
+		// find air loop index
+
+			// find coil
+
+			// find coil inlet node number
+
+			//find coil outlet node number
+	
+	}
+
+	void HVACSizingSimulationManager::createNewAirLoopCoolingCoilInletConditionsSizingAnalysisObject(
 		std::string const & AirLoopName, 
 		int const SystemSizingIndex
 	) 

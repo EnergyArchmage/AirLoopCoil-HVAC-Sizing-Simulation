@@ -242,6 +242,18 @@ private:
 	);
 };
 
+// base class for all AirLoop System Sizing advanced sizing using HVAC Sizing Simulations
+class AirLoopSizingAnalsysis
+{
+
+
+protected:
+
+		int airLoopIndex = 0;
+		int sysSizingIndex = 0;
+
+};
+
 class AirLoopMainCoolingCoilLeavingHumRatAnalysis
 {
 	public:
