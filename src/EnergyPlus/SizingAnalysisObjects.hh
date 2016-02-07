@@ -125,7 +125,7 @@ public:
 	std::map < int, int > newEnvrnToSeedEnvrnMap; // key is the new HVAC sim envrionment number, produces Seed environment number
 	int NumOfStepsInLogSet; // sum of all zone timestep steps in log
 	int timeStepsInAverage; // breadth back in time for running average, zone timesteps
-	Real64 &p_rVariable;    // reference to variable being loggged
+	Real64 & p_rVariable;    // reference to variable being loggged
 
 	std::vector< ZoneTimestepObject > ztStepObj; //will be sized to the sum of all steps, eg. timesteps in hour * 24 hours * 2 design days.
 
@@ -247,23 +247,31 @@ class AirLoopSizingAnalsysis
 {
 	public:
 		enum SizingAnalysisTypeEnum {
-			MainCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the main cooling coil
-			MainCoolingCoilInletConditions, // modify the conditions entering the main cooling coil
-			OutdoorAirCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the outdoor air cooling coil
-			OutdoorAirCoolingCoilInletConditions // modify the conditions entering the outdoor air cooling coil
+			mainCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the main cooling coil
+			mainCoolingCoilInletConditions, // modify the conditions entering the main cooling coil
+			outdoorAirCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the outdoor air cooling coil
+			outdoorAirCoolingCoilInletConditions // modify the conditions entering the outdoor air cooling coil
 		};
 
 		bool anotherIterationDesired = false;
 		int airLoopIndex = 0; // points into array struct DataAirSystems::PrimaryAirSystem
 		int sysSizingIndex = 0;
 		std::vector < SizingAnalysisTypeEnum > typesOfSizingAdjustments;
+		int mainCCoilOutEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
+		int mainCCoilOutTempDB_LogIndex = 0; // main cooling coil outlet drybulb temperature storage index for vector of log objects in the logger framework
+		int mainCCoilOutHumRat_LogIndex = 0; // main cooling coil outlet hum rat storage index for vector of log objects in the logger framework
+		int mainCCoilOutMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
+		int numTimeStepsInAvg = 0;
+		int mainCoolingCoilOutletNodeIndex = 0; // first main cooling coil found on main branch.
+
 protected: // data
 
 
 
+		std::string airLoopName = "";
 
-		int mainCoolingCoilOutletNodeIndex = 0; // first main cooling coil found on main branch.
-		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on branch
+		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on branch, node number 
+
 		std::string mainCoolingCoilName  = "";
 
 		int oaColingCoilOutletNodeIndex = 0;

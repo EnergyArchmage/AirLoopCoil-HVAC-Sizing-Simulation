@@ -57,6 +57,7 @@
 // in binary and source code form.
 
 // C++ Headers
+#include <cassert>
 #include <vector>
 
 // ObjexxFCL Headers
@@ -99,13 +100,13 @@ namespace EnergyPlus {
 
 		for ( int i = 1; i <= DataSizing::NumSysSizInput; ++i ) {
 			if ( DataSizing::SysSizInput( i ).precoolHumRatWasAutosized ) {
-				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::OutdoorAirCoolingCoilLeavingHumRat );
+				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::outdoorAirCoolingCoilLeavingHumRat );
 			}
 			if ( DataSizing::SysSizInput( i ).coolSupHumRatWasAutosized ) {
-				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::MainCoolingCoilLeavingHumRat );
+				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::mainCoolingCoilLeavingHumRat );
 			}
 			if ( DataSizing::SysSizInput( i ).CoolingCapMethod == DataSizing::ConcurrentDeviceAdjustedCoolingCapacity ) {
-				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::MainCoolingCoilInletConditions );
+				this->createOrFindNewAirSizingAnalysisObject( i , AirLoopSizingAnalsysis::mainCoolingCoilInletConditions );
 			}
 		}
 
@@ -181,35 +182,47 @@ namespace EnergyPlus {
 
 	void HVACSizingSimulationManager::SetupSizingAnalyses()
 	{
-		using DataLoopNode::Node;
-		using DataPlant::PlantReport;
-		using DataSizing::PlantSizData;
-		using DataSizing::HeatingLoop;
-		using DataSizing::CoolingLoop;
-		using DataSizing::CondenserLoop;
-		using DataSizing::SteamLoop;
 
 		for ( auto & P : plantCoincAnalyObjs ) {
 			//call setup log routine for each coincident plant analysis object
 			P.supplyInletNodeFlow_LogIndex = sizingLogger.SetupVariableSizingLog(
-				Node(P.supplySideInletNodeNum).MassFlowRate,
+				DataLoopNode::Node(P.supplySideInletNodeNum).MassFlowRate,
 				P.numTimeStepsInAvg );
 			P.supplyInletNodeTemp_LogIndex = sizingLogger.SetupVariableSizingLog(
-				Node(P.supplySideInletNodeNum).Temp,
+				DataLoopNode::Node(P.supplySideInletNodeNum).Temp,
 				P.numTimeStepsInAvg );
-			if ( PlantSizData(P.plantSizingIndex).LoopType == HeatingLoop
-					|| PlantSizData(P.plantSizingIndex).LoopType == SteamLoop ) {
+			if ( DataSizing::PlantSizData(P.plantSizingIndex).LoopType == DataSizing::HeatingLoop
+					|| DataSizing::PlantSizData(P.plantSizingIndex).LoopType == DataSizing::SteamLoop ) {
 				P.loopDemand_LogIndex = sizingLogger.SetupVariableSizingLog(
-					PlantReport(P.plantLoopIndex ).HeatingDemand,
+					DataPlant::PlantReport(P.plantLoopIndex ).HeatingDemand,
 					P.numTimeStepsInAvg );
-			} else if ( PlantSizData(P.plantSizingIndex).LoopType == CoolingLoop
-						|| PlantSizData(P.plantSizingIndex).LoopType == CondenserLoop ) {
+			} else if ( DataSizing::PlantSizData(P.plantSizingIndex).LoopType == DataSizing::CoolingLoop
+						|| DataSizing::PlantSizData(P.plantSizingIndex).LoopType == DataSizing::CondenserLoop ) {
 				P.loopDemand_LogIndex = sizingLogger.SetupVariableSizingLog(
-					PlantReport(P.plantLoopIndex ).CoolingDemand,
+					DataPlant::PlantReport(P.plantLoopIndex ).CoolingDemand,
 					P.numTimeStepsInAvg );
 			}
 
 		}
+
+		for ( auto & a : airLoopAdjustAnalyObjs ) {
+		//	if ( std::any_of( a.typesOfSizingAdjustments.begin(), a.typesOfSizingAdjustments.end(), AirLoopSizingAnalsysis::mainCoolingCoilLeavingHumRat || AirLoopSizingAnalsysis::mainCoolingCoilInletConditions ) ) {
+
+			//	a.mainCoolingCoilOutletNodeIndex = 
+
+			//	a.mainCCoilOutEnthalpy_LogIndex = sizingLogger.SetupVariableSizingLog( );
+
+
+		//	}
+			
+
+			// find main cooling coil 
+
+
+
+		
+		}
+
 	}
 
 	void HVACSizingSimulationManager::PostProcessLogs()

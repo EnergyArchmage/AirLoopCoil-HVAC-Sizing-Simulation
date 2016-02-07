@@ -347,7 +347,6 @@ namespace EnergyPlus {
 	}
 
 	int SizingLoggerFramework::SetupVariableSizingLog(
-//		int const SupplySideInletNodeNum  // change to pointer setup
 		Real64 & rVariable,
 		int stepsInAverage
 	)
@@ -707,13 +706,18 @@ namespace EnergyPlus {
 	}
 
 	AirLoopSizingAnalsysis::AirLoopSizingAnalsysis( // constructor
-	 		std::string const airLoopName,
+	 		std::string const loopName,
 			int const loopIndex,
 			int const sizingIndex,
 			SizingAnalysisTypeEnum analysisType
 		)
 		{
-		
+			this->airLoopIndex    = loopIndex;
+			this->airLoopName     = loopName;
+			this->sysSizingIndex  = sizingIndex;
+			this->typesOfSizingAdjustments.emplace_back( analysisType );
+			this->numTimeStepsInAvg = 1;
 		}
 
+	
 }
