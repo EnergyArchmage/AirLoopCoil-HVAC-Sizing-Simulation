@@ -186,10 +186,10 @@ namespace EnergyPlus {
 		for ( auto & P : plantCoincAnalyObjs ) {
 			//call setup log routine for each coincident plant analysis object
 			P.supplyInletNodeFlow_LogIndex = sizingLogger.SetupVariableSizingLog(
-				DataLoopNode::Node(P.supplySideInletNodeNum).MassFlowRate,
+				DataLoopNode::Node( P.supplySideInletNodeNum ).MassFlowRate,
 				P.numTimeStepsInAvg );
 			P.supplyInletNodeTemp_LogIndex = sizingLogger.SetupVariableSizingLog(
-				DataLoopNode::Node(P.supplySideInletNodeNum).Temp,
+				DataLoopNode::Node( P.supplySideInletNodeNum ).Temp,
 				P.numTimeStepsInAvg );
 			if ( DataSizing::PlantSizData(P.plantSizingIndex).LoopType == DataSizing::HeatingLoop
 					|| DataSizing::PlantSizData(P.plantSizingIndex).LoopType == DataSizing::SteamLoop ) {
@@ -206,14 +206,28 @@ namespace EnergyPlus {
 		}
 
 		for ( auto & a : airLoopAdjustAnalyObjs ) {
-		//	if ( std::any_of( a.typesOfSizingAdjustments.begin(), a.typesOfSizingAdjustments.end(), AirLoopSizingAnalsysis::mainCoolingCoilLeavingHumRat || AirLoopSizingAnalsysis::mainCoolingCoilInletConditions ) ) {
+	//		if ( std::find( a.typesOfSizingAdjustments.begin(), a.typesOfSizingAdjustments.end(), AirLoopSizingAnalsysis::mainCoolingCoilLeavingHumRat || AirLoopSizingAnalsysis::mainCoolingCoilInletConditions )  != a.typesOfSizingAdjustments.end() ) {
+			if ( a.mainCoilLogged ) {
+				// set up data logs on main cooling coil inlet node
+				a.mainCCoilInEnthalpy_LogIndex = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilInletNodeIndex ).Enthalpy, a.numTimeStepsInAvg);
+				a.mainCCoilinHumRat_LogIndex   = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilInletNodeIndex ).HumRat, a.numTimeStepsInAvg);
+				a.mainCCoilInMdot_LogIndex     = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilInletNodeIndex ).MassFlowRate, a.numTimeStepsInAvg);
+				a.mainCCoilInTempDB_LogIndex   = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilInletNodeIndex ).Temp, a.numTimeStepsInAvg);
+
+				// set up data logs on main cooling coil outlet node
+				a.mainCCoilOutEnthalpy_LogIndex = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilOutletNodeIndex ).Enthalpy, a.numTimeStepsInAvg);
+				a.mainCCoilOutHumRat_LogIndex   = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilOutletNodeIndex ).HumRat, a.numTimeStepsInAvg);
+				a.mainCCoilOutMdot_LogIndex     = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilOutletNodeIndex ).MassFlowRate, a.numTimeStepsInAvg);
+				a.mainCCoilOutTempDB_LogIndex   = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilOutletNodeIndex ).Temp, a.numTimeStepsInAvg);
+
+			}
 
 			//	a.mainCoolingCoilOutletNodeIndex = 
 
 			//	a.mainCCoilOutEnthalpy_LogIndex = sizingLogger.SetupVariableSizingLog( );
 
 
-		//	}
+	///		}
 			
 
 			// find main cooling coil 

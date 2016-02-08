@@ -252,17 +252,38 @@ class AirLoopSizingAnalsysis
 			outdoorAirCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the outdoor air cooling coil
 			outdoorAirCoolingCoilInletConditions // modify the conditions entering the outdoor air cooling coil
 		};
-
+		int numTimeStepsInAvg = 0;
 		bool anotherIterationDesired = false;
 		int airLoopIndex = 0; // points into array struct DataAirSystems::PrimaryAirSystem
 		int sysSizingIndex = 0;
 		std::vector < SizingAnalysisTypeEnum > typesOfSizingAdjustments;
+
+		bool mainCoilLogged = false;
 		int mainCCoilOutEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
 		int mainCCoilOutTempDB_LogIndex = 0; // main cooling coil outlet drybulb temperature storage index for vector of log objects in the logger framework
 		int mainCCoilOutHumRat_LogIndex = 0; // main cooling coil outlet hum rat storage index for vector of log objects in the logger framework
 		int mainCCoilOutMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
-		int numTimeStepsInAvg = 0;
 		int mainCoolingCoilOutletNodeIndex = 0; // first main cooling coil found on main branch.
+
+		int mainCCoilInEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
+		int mainCCoilInTempDB_LogIndex = 0; // main cooling coil outlet drybulb temperature storage index for vector of log objects in the logger framework
+		int mainCCoilinHumRat_LogIndex = 0; // main cooling coil outlet hum rat storage index for vector of log objects in the logger framework
+		int mainCCoilInMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
+		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on main branch.
+
+		bool oaCoilLogged = false;
+		int oaCCoilOutEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
+		int oaCCoilOutTempDB_LogIndex = 0; // main cooling coil outlet drybulb temperature storage index for vector of log objects in the logger framework
+		int oaCCoilOutHumRat_LogIndex = 0; // main cooling coil outlet hum rat storage index for vector of log objects in the logger framework
+		int oaCCoilOutMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
+		int oaCoolingCoilOutletNodeIndex = 0; // first main cooling coil found on main branch.
+
+		int oaCCoilInEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
+		int oanCCoilInTempDB_LogIndex = 0; // main cooling coil outlet drybulb temperature storage index for vector of log objects in the logger framework
+		int oanCCoilinHumRat_LogIndex = 0; // main cooling coil outlet hum rat storage index for vector of log objects in the logger framework
+		int oaCCoilInMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
+		int oaCoolingCoilInletNodeIndex = 0; // first main cooling coil found on main branch.
+
 
 protected: // data
 
@@ -270,7 +291,6 @@ protected: // data
 
 		std::string airLoopName = "";
 
-		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on branch, node number 
 
 		std::string mainCoolingCoilName  = "";
 

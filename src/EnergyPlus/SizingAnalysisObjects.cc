@@ -66,6 +66,7 @@
 
 // EnergyPlus Headers
 #include <SizingAnalysisObjects.hh>
+#include <DataAirSystems.hh>
 #include <DataHVACGlobals.hh>
 #include <DataLoopNode.hh>
 #include <DataPlant.hh>
@@ -73,6 +74,7 @@
 #include <General.hh>
 #include <OutputProcessor.hh>
 #include <OutputReportPredefined.hh>
+#include <SimAirServingZones.hh>
 #include <WeatherManager.hh>
 
 namespace EnergyPlus {
@@ -717,6 +719,34 @@ namespace EnergyPlus {
 			this->sysSizingIndex  = sizingIndex;
 			this->typesOfSizingAdjustments.emplace_back( analysisType );
 			this->numTimeStepsInAvg = 1;
+
+
+			if ( analysisType == mainCoolingCoilLeavingHumRat || analysisType == mainCoolingCoilInletConditions ) {
+				bool FoundCentralCoolCoil = false;
+				for( int BranchNum = 1; ! FoundCentralCoolCoil && BranchNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).NumBranches; ++BranchNum ) {
+					for( int CompNum = 1; ! FoundCentralCoolCoil && CompNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).TotalComponents; ++CompNum ) {
+						int CompTypeNum = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).CompType_Num;
+						if( CompTypeNum == SimAirServingZones::WaterCoil_SimpleCool || CompTypeNum == SimAirServingZones::WaterCoil_Cooling || CompTypeNum == SimAirServingZones::WaterCoil_DetailedCool ||  CompTypeNum == SimAirServingZones::WaterCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXSystem || SimAirServingZones::CoilUserDefined ) {
+							FoundCentralCoolCoil = true;
+							this->mainCoolingCoilInletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumIn;
+							this->mainCoolingCoilOutletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumOut;
+
+							this->mainCoolingCoilName = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).Name;
+							this->airLoopName = DataAirSystems::PrimaryAirSystem( loopIndex ).Name;
+
+						}
+					} // end of component loop
+				} // end of Branch loop			
+				
+
+				this->mainCoilLogged = FoundCentralCoolCoil;
+
+
+			}
+
+			if ( analysisType == outdoorAirCoolingCoilLeavingHumRat ) {
+			
+			}
 		}
 
 	
