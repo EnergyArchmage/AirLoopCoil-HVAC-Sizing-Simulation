@@ -341,7 +341,7 @@ namespace EnergyPlus {
 		//unload zone log data values into an array
 		std::vector < Real64 > returnVec;
 		for ( auto & zt : ztStepObj ) {
-			returnVec.emplace_back( zt.logDataValue );
+			returnVec.emplace_back( zt.runningAvgDataValue );
 		}
 		return returnVec;
 	}
@@ -526,19 +526,7 @@ namespace EnergyPlus {
 		int const HVACSizingIterCount
 	)
 	{
-		using DataGlobals::OutputFileInits;
-		using DataGlobals::TimeStepZone;
-		using DataGlobals::SecInHour;
-		using DataSizing::PlantSizData;
-		using DataSizing::NoSizingFactorMode;
-		using DataSizing::GlobalHeatingSizingFactorMode;
-		using DataSizing::GlobalCoolingSizingFactorMode;
-		using DataSizing::LoopComponentSizingFactorMode;
-		using DataSizing::GlobalHeatSizingFactor;
-		using DataSizing::GlobalCoolSizingFactor;
-		using General::TrimSigDigits;
-		using General::RoundSigDigits;
-		using namespace DataPlant;
+
 		using namespace OutputReportPredefined;
 		using WeatherManager::Environment;
 		using DataHVACGlobals::SmallWaterVolFlow;
@@ -547,7 +535,6 @@ namespace EnergyPlus {
 		Real64 normalizedChange;
 		Real64 newFoundVolFlowRate;
 		Real64 peakLoadCalculatedMassFlow;
-		std::string chIteration;
 		std::string chSetSizes;
 		std::string chDemandTrapUsed;
 		static gio::Fmt fmtA( "(A)" );
@@ -564,7 +551,7 @@ namespace EnergyPlus {
 			nullStampProblem =  false;
 		}
 
-		previousVolDesignFlowRate = PlantSizData( plantSizingIndex ).DesVolFlowRate;
+		previousVolDesignFlowRate = DataSizing::PlantSizData( plantSizingIndex ).DesVolFlowRate;
 
 		if (newFoundMassFlowRateTimeStamp.runningAvgDataValue > 0.0 ) {
 			newFoundMassFlowRate = newFoundMassFlowRateTimeStamp.runningAvgDataValue;
@@ -573,10 +560,10 @@ namespace EnergyPlus {
 		}
 
 		//step 3 calculate mdot from max load and delta T
-		if ( (NewFoundMaxDemandTimeStamp.runningAvgDataValue > 0.0) &&
-			((specificHeatForSizing * PlantSizData( plantSizingIndex ).DeltaT) > 0.0))  {
+		if ( ( NewFoundMaxDemandTimeStamp.runningAvgDataValue > 0.0 ) &&
+			( ( specificHeatForSizing * DataSizing::PlantSizData( plantSizingIndex ).DeltaT ) > 0.0 ) )  {
 				peakLoadCalculatedMassFlow = NewFoundMaxDemandTimeStamp.runningAvgDataValue /
-											(specificHeatForSizing * PlantSizData( plantSizingIndex ).DeltaT);
+											( specificHeatForSizing * DataSizing::PlantSizData( plantSizingIndex ).DeltaT);
 		} else {
 			peakLoadCalculatedMassFlow = 0.0;
 		}
@@ -592,15 +579,15 @@ namespace EnergyPlus {
 
 		// now apply the correct sizing factor depending on input option
 		sizingFac = 1.0;
-		if ( PlantSizData( plantSizingIndex ).SizingFactorOption == NoSizingFactorMode ) {
+		if ( DataSizing::PlantSizData( plantSizingIndex ).SizingFactorOption == DataSizing::NoSizingFactorMode ) {
 			sizingFac = 1.0;
-		} else if ( PlantSizData( plantSizingIndex ).SizingFactorOption == GlobalHeatingSizingFactorMode ) {
-			sizingFac = GlobalHeatSizingFactor;
-		} else if ( PlantSizData( plantSizingIndex ).SizingFactorOption == GlobalCoolingSizingFactorMode ) {
-			sizingFac = GlobalCoolSizingFactor;
-		} else if ( PlantSizData( plantSizingIndex ).SizingFactorOption == LoopComponentSizingFactorMode ) {
+		} else if ( DataSizing::PlantSizData( plantSizingIndex ).SizingFactorOption == DataSizing::GlobalHeatingSizingFactorMode ) {
+			sizingFac = DataSizing::GlobalHeatSizingFactor;
+		} else if ( DataSizing::PlantSizData( plantSizingIndex ).SizingFactorOption == DataSizing::GlobalCoolingSizingFactorMode ) {
+			sizingFac = DataSizing::GlobalCoolSizingFactor;
+		} else if ( DataSizing::PlantSizData( plantSizingIndex ).SizingFactorOption == DataSizing::LoopComponentSizingFactorMode ) {
 			// multiplier used for pumps, often 1.0, from component level sizing fractions
-			sizingFac = PlantLoop( plantLoopIndex ).LoopSide( SupplySide ).Branch( 1 ).PumpSizFac;
+			sizingFac = DataPlant::PlantLoop( plantLoopIndex ).LoopSide( DataPlant::SupplySide ).Branch( 1 ).PumpSizFac;
 		}
 
 		newAdjustedMassFlowRate = newFoundMassFlowRate * sizingFac; // apply overall heating or cooling sizing factor
@@ -613,7 +600,7 @@ namespace EnergyPlus {
 		if ( newVolDesignFlowRate > SmallWaterVolFlow && ! nullStampProblem ) {// do not use zero size or bad stamp data
 
 			normalizedChange = std::abs((newVolDesignFlowRate - previousVolDesignFlowRate) / previousVolDesignFlowRate);
-			if (normalizedChange > significantNormalizedChange ) {
+			if (normalizedChange > this->significantNormalizedChange ) {
 				anotherIterationDesired = true;
 				setNewSizes = true;
 			} else {
@@ -623,25 +610,25 @@ namespace EnergyPlus {
 
 		if ( setNewSizes ) {
 		// set new size values for rest of simulation
-			PlantSizData( plantSizingIndex ).DesVolFlowRate = newVolDesignFlowRate;
+			DataSizing::PlantSizData( plantSizingIndex ).DesVolFlowRate = newVolDesignFlowRate;
 
-			if (PlantLoop( plantLoopIndex ).MaxVolFlowRateWasAutoSized ) {
-				PlantLoop( plantLoopIndex ).MaxVolFlowRate = newVolDesignFlowRate;
-				PlantLoop( plantLoopIndex ).MaxMassFlowRate =  newAdjustedMassFlowRate;
+			if (DataPlant::PlantLoop( plantLoopIndex ).MaxVolFlowRateWasAutoSized ) {
+				DataPlant::PlantLoop( plantLoopIndex ).MaxVolFlowRate = newVolDesignFlowRate;
+				DataPlant::PlantLoop( plantLoopIndex ).MaxMassFlowRate =  newAdjustedMassFlowRate;
 			}
-			if ( PlantLoop( plantLoopIndex ).VolumeWasAutoSized ) {
-				PlantLoop( plantLoopIndex ).Volume = PlantLoop( plantLoopIndex ).MaxVolFlowRate * TimeStepZone * SecInHour / 0.8;
-				PlantLoop( plantLoopIndex ).Mass = PlantLoop( plantLoopIndex ).Volume* densityForSizing;
+			if ( DataPlant::PlantLoop( plantLoopIndex ).VolumeWasAutoSized ) {
+				DataPlant::PlantLoop( plantLoopIndex ).Volume = DataPlant::PlantLoop( plantLoopIndex ).MaxVolFlowRate * DataGlobals::TimeStepZone * DataGlobals::SecInHour / 0.8;
+				DataPlant::PlantLoop( plantLoopIndex ).Mass = DataPlant::PlantLoop( plantLoopIndex ).Volume* densityForSizing;
 			}
 
 		}
 
 		// add a seperate eio summary report about what happened, did demand trap get used, what were the key values.
 		if (! eioHeaderDoneOnce ) {
-			gio::write( OutputFileInits, fmtA ) << "! <Plant Coincident Sizing Algorithm>,Plant Loop Name,Sizing Pass {#},Measured Mass Flow{kg/s},Measured Demand {W},Demand Calculated Mass Flow{kg/s},Sizes Changed {Yes/No},Previous Volume Flow Rate {m3/s},New Volume Flow Rate {m3/s},Demand Check Applied {Yes/No},Sizing Factor {},Normalized Change {},Specific Heat{J/kg-K},Density {kg/m3}";
+			gio::write( DataGlobals::OutputFileInits, fmtA ) << "! <Plant Coincident Sizing Algorithm>,Plant Loop Name,Sizing Pass {#},Measured Mass Flow{kg/s},Measured Demand {W},Demand Calculated Mass Flow{kg/s},Sizes Changed {Yes/No},Previous Volume Flow Rate {m3/s},New Volume Flow Rate {m3/s},Demand Check Applied {Yes/No},Sizing Factor {},Normalized Change {},Specific Heat{J/kg-K},Density {kg/m3}";
 			eioHeaderDoneOnce = true;
 		}
-		chIteration = TrimSigDigits(HVACSizingIterCount);
+		std::string chIteration = General::TrimSigDigits(HVACSizingIterCount);
 		if ( setNewSizes ) {
 			chSetSizes = "Yes";
 		} else {
@@ -653,53 +640,53 @@ namespace EnergyPlus {
 			chDemandTrapUsed = "No";
 		}
 
-		gio::write( OutputFileInits, fmtA ) << "Plant Coincident Sizing Algorithm,"
-				+ name + ","
+		gio::write( DataGlobals::OutputFileInits, fmtA ) << "Plant Coincident Sizing Algorithm,"
+				+ this->name + ","
 				+ chIteration + ","
-				+ RoundSigDigits( newFoundMassFlowRateTimeStamp.runningAvgDataValue, 7 ) + ","
-				+ RoundSigDigits( NewFoundMaxDemandTimeStamp.runningAvgDataValue, 2 ) + ","
-				+ RoundSigDigits( peakLoadCalculatedMassFlow, 7) + ","
+				+ General::RoundSigDigits( newFoundMassFlowRateTimeStamp.runningAvgDataValue, 7 ) + ","
+				+ General::RoundSigDigits( NewFoundMaxDemandTimeStamp.runningAvgDataValue, 2 ) + ","
+				+ General::RoundSigDigits( peakLoadCalculatedMassFlow, 7) + ","
 				+ chSetSizes + ","
-				+ RoundSigDigits( previousVolDesignFlowRate , 6 ) + ","
-				+ RoundSigDigits( newVolDesignFlowRate, 6 ) + ","
+				+ General::RoundSigDigits( previousVolDesignFlowRate , 6 ) + ","
+				+ General::RoundSigDigits( newVolDesignFlowRate, 6 ) + ","
 				+ chDemandTrapUsed + ","
-				+ RoundSigDigits( sizingFac, 4) + ","
-				+ RoundSigDigits( normalizedChange, 6 ) + ","
-				+ RoundSigDigits( specificHeatForSizing, 4 ) +","
-				+ RoundSigDigits( densityForSizing, 4);
+				+ General::RoundSigDigits( sizingFac, 4) + ","
+				+ General::RoundSigDigits( normalizedChange, 6 ) + ","
+				+ General::RoundSigDigits( specificHeatForSizing, 4 ) +","
+				+ General::RoundSigDigits( densityForSizing, 4);
 
 		//report to sizing summary table called Plant Loop Coincident Design Fluid Flow Rates
 
-		PreDefTableEntry( pdchPlantSizPrevVdot, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , previousVolDesignFlowRate , 6 );
-		PreDefTableEntry( pdchPlantSizMeasVdot, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , newFoundVolFlowRate , 6 );
-		PreDefTableEntry( pdchPlantSizCalcVdot, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , newVolDesignFlowRate , 6 );
+		PreDefTableEntry( pdchPlantSizPrevVdot, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , previousVolDesignFlowRate , 6 );
+		PreDefTableEntry( pdchPlantSizMeasVdot, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , newFoundVolFlowRate , 6 );
+		PreDefTableEntry( pdchPlantSizCalcVdot, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , newVolDesignFlowRate , 6 );
 
 		if (setNewSizes) {
-			PreDefTableEntry( pdchPlantSizCoincYesNo, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , "Yes" );
+			PreDefTableEntry( pdchPlantSizCoincYesNo, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , "Yes" );
 		} else {
-			PreDefTableEntry( pdchPlantSizCoincYesNo, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , "No" );
+			PreDefTableEntry( pdchPlantSizCoincYesNo, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , "No" );
 		}
 
 		if ( ! nullStampProblem ) {
 			if ( ! changedByDemand ) {
 				if ( newFoundMassFlowRateTimeStamp.envrnNum > 0 ) { // protect against invalid index
-					PreDefTableEntry( pdchPlantSizDesDay, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , Environment(newFoundMassFlowRateTimeStamp.envrnNum).Title );
+					PreDefTableEntry( pdchPlantSizDesDay, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , Environment(newFoundMassFlowRateTimeStamp.envrnNum).Title );
 				}
-				PreDefTableEntry( pdchPlantSizPkTimeDayOfSim, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
+				PreDefTableEntry( pdchPlantSizPkTimeDayOfSim, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
 					newFoundMassFlowRateTimeStamp.dayOfSim );
-				PreDefTableEntry( pdchPlantSizPkTimeHour, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
+				PreDefTableEntry( pdchPlantSizPkTimeHour, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
 					newFoundMassFlowRateTimeStamp.hourOfDay - 1 );
-				PreDefTableEntry( pdchPlantSizPkTimeMin, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
+				PreDefTableEntry( pdchPlantSizPkTimeMin, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
 					newFoundMassFlowRateTimeStamp.stepStartMinute, 0 );
 			} else {
 				if ( NewFoundMaxDemandTimeStamp.envrnNum > 0 ) { // protect against invalid index
-					PreDefTableEntry( pdchPlantSizDesDay, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , Environment(NewFoundMaxDemandTimeStamp.envrnNum).Title );
+					PreDefTableEntry( pdchPlantSizDesDay, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration , Environment(NewFoundMaxDemandTimeStamp.envrnNum).Title );
 				}
-				PreDefTableEntry( pdchPlantSizPkTimeDayOfSim, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
+				PreDefTableEntry( pdchPlantSizPkTimeDayOfSim, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
 					NewFoundMaxDemandTimeStamp.dayOfSim );
-				PreDefTableEntry( pdchPlantSizPkTimeHour, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
+				PreDefTableEntry( pdchPlantSizPkTimeHour, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
 					NewFoundMaxDemandTimeStamp.hourOfDay - 1 );
-				PreDefTableEntry( pdchPlantSizPkTimeMin, PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
+				PreDefTableEntry( pdchPlantSizPkTimeMin, DataPlant::PlantLoop( plantLoopIndex ).Name + " Sizing Pass " + chIteration ,
 					NewFoundMaxDemandTimeStamp.stepStartMinute, 0 );
 			}
 		}
@@ -737,47 +724,109 @@ namespace EnergyPlus {
 		this->qdot = this->mdot * ( this->inH - this->outH ); // calculate coil load, negative is cooling
 	}
 
+	bool AirLoopSizingAnalsysis::airLoopSizingEIOHeaderDoneOnce = false;
+
 	AirLoopSizingAnalsysis::AirLoopSizingAnalsysis( // constructor
-	 		std::string const loopName,
-			int const loopIndex,
-			int const sizingIndex,
-			SizingAnalysisTypeEnum analysisType
-		)
-		{
-			this->airLoopIndex    = loopIndex;
-			this->airLoopName     = loopName;
-			this->sysSizingIndex  = sizingIndex;
-			this->typesOfSizingAdjustments.emplace_back( analysisType );
-			this->numTimeStepsInAvg = 1;
+		std::string const loopName,
+		int const loopIndex,
+		int const sizingIndex,
+		SizingAnalysisTypeEnum analysisType
+	)
+	{
+		this->airLoopIndex    = loopIndex;
+		this->airLoopName     = loopName;
+		this->sysSizingIndex  = sizingIndex;
+		this->typesOfSizingAdjustments.emplace_back( analysisType );
+		this->numTimeStepsInAvg = 1;
 
+		if ( analysisType == mainCoolingCoilLeavingHumRat || analysisType == mainCoolingCoilInletConditions ) {
+			bool FoundCentralCoolCoil = false;
+			for( int BranchNum = 1; ! FoundCentralCoolCoil && BranchNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).NumBranches; ++BranchNum ) {
+				for( int CompNum = 1; ! FoundCentralCoolCoil && CompNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).TotalComponents; ++CompNum ) {
+					int CompTypeNum = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).CompType_Num;
+					if( CompTypeNum == SimAirServingZones::WaterCoil_SimpleCool || CompTypeNum == SimAirServingZones::WaterCoil_Cooling || CompTypeNum == SimAirServingZones::WaterCoil_DetailedCool ||  CompTypeNum == SimAirServingZones::WaterCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXSystem ||  CompTypeNum == SimAirServingZones::CoilUserDefined ) {
+						FoundCentralCoolCoil = true;
+						this->mainCoolingCoilInletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumIn;
+						this->mainCoolingCoilOutletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumOut;
 
-			if ( analysisType == mainCoolingCoilLeavingHumRat || analysisType == mainCoolingCoilInletConditions ) {
-				bool FoundCentralCoolCoil = false;
-				for( int BranchNum = 1; ! FoundCentralCoolCoil && BranchNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).NumBranches; ++BranchNum ) {
-					for( int CompNum = 1; ! FoundCentralCoolCoil && CompNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).TotalComponents; ++CompNum ) {
-						int CompTypeNum = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).CompType_Num;
-						if( CompTypeNum == SimAirServingZones::WaterCoil_SimpleCool || CompTypeNum == SimAirServingZones::WaterCoil_Cooling || CompTypeNum == SimAirServingZones::WaterCoil_DetailedCool ||  CompTypeNum == SimAirServingZones::WaterCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXSystem ||  CompTypeNum == SimAirServingZones::CoilUserDefined ) {
-							FoundCentralCoolCoil = true;
-							this->mainCoolingCoilInletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumIn;
-							this->mainCoolingCoilOutletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumOut;
+						this->mainCoolingCoilName = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).Name;
+						this->airLoopName = DataAirSystems::PrimaryAirSystem( loopIndex ).Name;
 
-							this->mainCoolingCoilName = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).Name;
-							this->airLoopName = DataAirSystems::PrimaryAirSystem( loopIndex ).Name;
-
-						}
-					} // end of component loop
-				} // end of Branch loop			
+					}
+				} // end of component loop
+			} // end of Branch loop			
 				
 
-				this->mainCoilLogged = FoundCentralCoolCoil;
+			this->mainCoilLogged = FoundCentralCoolCoil;
 
 
-			}
+		}
 
-			if ( analysisType == outdoorAirCoolingCoilLeavingHumRat ) {
+		if ( analysisType == outdoorAirCoolingCoilLeavingHumRat ) {
 			
+		}
+	}
+
+	void AirLoopSizingAnalsysis::resolveMainCoilOutletHumidityRatio(
+			int const HVACSizingIterCount
+	)
+	{
+
+		bool nullStampProblem;
+	//	if ( CheckTimeStampForNull( newFoundMainCoilOutHumRatTimeStamp  ) {
+			// problem, don't have valid stamp, don't have any info to report either
+	//		nullStampProblem =  true;
+	//	} else {
+			nullStampProblem =  false;
+	//	}
+		this->previousMainCoilOutHumRat = DataSizing::FinalSysSizing( this->sysSizingIndex ).coolSupHumRat;
+
+		if ( this->newFoundMainCoilOutHumRatTimeStamp.runningAvgDataValue > 0.0 ) {
+			this->newFoundMainCoilOutHumRat = min( this->newFoundMainCoilOutHumRatTimeStamp.runningAvgDataValue, this->previousMainCoilOutHumRat );
+		}
+
+		bool setNewHumRat =  false;
+		Real64 normalizedChange = 0.0;
+		if ( this->newFoundMainCoilOutHumRat > 0.0 && ! nullStampProblem && this->previousMainCoilOutHumRat > 0.0 ) {
+			normalizedChange = std::abs( (this->newFoundMainCoilOutHumRat - this->previousMainCoilOutHumRat ) / this->previousMainCoilOutHumRat );
+
+			if ( normalizedChange > this->significantNormalizedChange ) {
+				this->anotherIterationDesired = true;
+				setNewHumRat =  true;
+			} else {
+				this->anotherIterationDesired = false;
 			}
 		}
 
-	
+		if ( setNewHumRat ) {
+			if ( DataSizing::SysSizInput( this->sysSizingIndex ).coolSupHumRatWasAutosized ) {
+				DataSizing::FinalSysSizing( this->sysSizingIndex ).coolSupHumRat = this->newFoundMainCoilOutHumRat;
+			} else {
+				this->anotherIterationDesired = false;
+				setNewHumRat =  false;
+			}
+
+
+		}
+
+		static gio::Fmt fmtA( "(A)" );
+		if ( ! airLoopSizingEIOHeaderDoneOnce) {
+			gio::write( DataGlobals::OutputFileInits, fmtA ) << "! <Air Loop Advanced Sizing Algorithm>,AirLoopHVAC name,Sizing Pass {#},Detected Cooling Supply Air Humidity Ratio {kg-H2O/kg-dryAir}, Previous Cooling Supply Air Humidity Ratio {kg-H2O/kg-dryAir},Humidity Ratio Changed {Yes/No}, Normalized Change {}" ;
+			airLoopSizingEIOHeaderDoneOnce =  true;
+		}
+		std::string chIteration = General::TrimSigDigits(HVACSizingIterCount);
+		std::string chSetSizes;
+		if ( setNewHumRat ) {
+			chSetSizes = "Yes";
+		} else {
+			chSetSizes = "No";
+		}
+		gio::write( DataGlobals::OutputFileInits, fmtA ) << "Air Loop Advanced Sizing Algorithm, "
+			+ this->airLoopName + ","
+			+ chIteration + ","
+			+ General::RoundSigDigits( this->newFoundMainCoilOutHumRat, 7 ) + ","
+			+ General::RoundSigDigits( this->previousMainCoilOutHumRat, 7 ) + ","
+			+ chSetSizes + ","
+			+ General::RoundSigDigits( normalizedChange, 6 );
+	};
 }
