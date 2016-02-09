@@ -318,6 +318,13 @@ namespace EnergyPlus {
 	return tmpztStepStamp;
 	}
 
+	ZoneTimestepObject SizingLog::getLogVariableDataAtIndex (
+		int const ztIndex // index into zonetimesteps
+	) 
+	{
+		return ztStepObj[ ztIndex ];
+	}
+
 	Real64 SizingLog::GetLogVariableDataAtTimestamp(
 		ZoneTimestepObject tmpztStepStamp
 	)
@@ -713,6 +720,21 @@ namespace EnergyPlus {
 		}
 
 		return isNull;
+	}
+
+	AirloopCoilZTimestepProcessor::AirloopCoilZTimestepProcessor(
+				Real64 const enthIn,
+				Real64 const enthOut, 
+				Real64 const mdotIn,
+				Real64 const humRatOut
+	)
+	{
+		
+		this->inH  = enthIn;
+		this->outH = enthOut;
+		this->mdot = mdotIn;
+		this->outW = humRatOut;
+		this->qdot = this->mdot * ( this->inH - this->outH ); // calculate coil load, negative is cooling
 	}
 
 	AirLoopSizingAnalsysis::AirLoopSizingAnalsysis( // constructor

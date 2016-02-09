@@ -268,23 +268,43 @@ namespace EnergyPlus {
 		int const HVACSizingIterCount 
 	)
 	{
+
+		std::vector< AirloopCoilZTimestepProcessor > coilProcVec;
+
 		airLoopSizingAdjustAnalyRequestsAnotherIteration = false;
 		for ( auto & a : airLoopAdjustAnalyObjs ) {
-
+			coilProcVec.clear();
 			if ( a.mainCoilLogged ) {
 		
-				std::vector< Real64> inHvec = sizingLogger.logObjs[ a.mainCCoilInEnthalpy_LogIndex ].getLogVariableVector();
+				std::vector< Real64> inHvec   = sizingLogger.logObjs[ a.mainCCoilInEnthalpy_LogIndex ].getLogVariableVector();
 
 				std::vector< Real64 > outHvec = sizingLogger.logObjs[ a.mainCCoilOutEnthalpy_LogIndex ].getLogVariableVector();
 
 				std::vector< Real64 > mdotVec = sizingLogger.logObjs[ a.mainCCoilInMdot_LogIndex ].getLogVariableVector();
 
-				std::vector< Real64 > qdotVec;
+				std::vector< Real64 > outHumRat = sizingLogger.logObjs[ a.mainCCoilOutHumRat_LogIndex ].getLogVariableVector();
+
 
 				for ( std::size_t i = 0; i < inHvec.size(); ++i ) {
-					qdotVec[ i ] = mdotVec[ i ] * ( inHvec[i] - outHvec[ i ] );
+
+					coilProcVec.emplace_back ( inHvec[i] , outHvec[ i ], mdotVec[ i ], outHumRat[ i ] )  ; 
 				}
-				Real64 maxCoolingLoad = *std::min_element( qdotVec.begin(), qdotVec.end() ) ;
+				int maxCoolingIndex = -1;
+				Real64 maxCoolingLoad = 0.0;
+				for ( std::size_t i = 0; i < coilProcVec.size(); ++i ) {
+					if ( coilProcVec[ i ].qdot < maxCoolingLoad ) {
+						maxCoolingLoad = coilProcVec[ i ].qdot;
+						maxCoolingIndex = i;
+					}
+				}
+
+				Real64 newHumRat = coilProcVec[ maxCoolingIndex ].outW;
+
+				a.newFoundMainCoilOutHumRat = sizingLogger.logObjs[ a.mainCCoilOutHumRat_LogIndex ].getLogVariableDataAtIndex( maxCoolingIndex );
+
+
+
+
 
 			}
 

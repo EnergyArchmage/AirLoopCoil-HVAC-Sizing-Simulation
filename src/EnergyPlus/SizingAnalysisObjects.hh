@@ -144,6 +144,10 @@ public:
 
 	ZoneTimestepObject GetLogVariableDataMax();
 
+	ZoneTimestepObject getLogVariableDataAtIndex (
+		int const ztIndex
+	);
+
 	Real64 GetLogVariableDataAtTimestamp(
 		ZoneTimestepObject tmpztStepStamp
 	);
@@ -247,6 +251,26 @@ private:
 };
 
 // class for AirLoop System Sizing advanced sizing using HVAC Sizing Simulations
+
+	class AirloopCoilZTimestepProcessor // small utility structure to hold a combination of logged and calculated data 
+		{
+		public :
+			Real64 inH = 0.0;
+			Real64 outH = 0.0;
+			Real64 outW = 0.0;
+			Real64 mdot = 0.0;
+			Real64 qdot = 0.0;
+
+		public:
+			AirloopCoilZTimestepProcessor ( 
+				Real64 const enthIn,
+				Real64 const enthOut, 
+				Real64 const mdotIn,
+				Real64 const humRatOut
+			);
+
+		};
+
 class AirLoopSizingAnalsysis
 {
 	public:
@@ -275,6 +299,8 @@ class AirLoopSizingAnalsysis
 		int mainCCoilInMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
 		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on main branch.
 
+		ZoneTimestepObject newFoundMainCoilOutHumRat;
+
 		bool oaCoilLogged = false;
 		int oaCCoilOutEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
 		int oaCCoilOutTempDB_LogIndex = 0; // main cooling coil outlet drybulb temperature storage index for vector of log objects in the logger framework
@@ -287,6 +313,7 @@ class AirLoopSizingAnalsysis
 		int oanCCoilinHumRat_LogIndex = 0; // main cooling coil outlet hum rat storage index for vector of log objects in the logger framework
 		int oaCCoilInMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
 		int oaCoolingCoilInletNodeIndex = 0; // first main cooling coil found on main branch.
+
 
 
 protected: // data
