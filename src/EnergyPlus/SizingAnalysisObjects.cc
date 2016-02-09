@@ -280,9 +280,7 @@ namespace EnergyPlus {
 
 		std::map< int, int >:: iterator end = ztStepCountByEnvrnMap.end();
 		for (std::map< int, int >:: iterator itr = ztStepCountByEnvrnMap.begin(); itr != end; ++itr) {
-//		for (int k = 0; k < NumOfEnvironmentsInLogSet; k++) { // outer loop over environments in log set
 
-//			for ( int i = 0; i < ztStepCountByEnvrn[ k ]; ++i ) { // next inner loop over zone timestep steps
 			for ( int i = 0; i < itr->second; ++i ) { // next inner loop over zone timestep steps
 
 				if ( timeStepsInAverage > 0 ) {
@@ -310,7 +308,7 @@ namespace EnergyPlus {
 			tmpztStepStamp = ztStepObj[ 1 ];
 		}
 
-		for ( auto &Zt : ztStepObj ) {
+		for ( auto & Zt : ztStepObj ) {
 
 			if ( Zt.runningAvgDataValue > MaxVal) {
 				MaxVal = Zt.runningAvgDataValue;
@@ -329,6 +327,16 @@ namespace EnergyPlus {
 		Real64 const val = ztStepObj[index].runningAvgDataValue;
 
 		return val;
+	}
+
+	std::vector< Real64 > SizingLog::getLogVariableVector()
+	{
+		//unload zone log data values into an array
+		std::vector < Real64 > returnVec;
+		for ( auto & zt : ztStepObj ) {
+			returnVec.emplace_back( zt.logDataValue );
+		}
+		return returnVec;
 	}
 
 	void SizingLog::ReInitLogForIteration()
@@ -726,7 +734,7 @@ namespace EnergyPlus {
 				for( int BranchNum = 1; ! FoundCentralCoolCoil && BranchNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).NumBranches; ++BranchNum ) {
 					for( int CompNum = 1; ! FoundCentralCoolCoil && CompNum <= DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).TotalComponents; ++CompNum ) {
 						int CompTypeNum = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).CompType_Num;
-						if( CompTypeNum == SimAirServingZones::WaterCoil_SimpleCool || CompTypeNum == SimAirServingZones::WaterCoil_Cooling || CompTypeNum == SimAirServingZones::WaterCoil_DetailedCool ||  CompTypeNum == SimAirServingZones::WaterCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXSystem || SimAirServingZones::CoilUserDefined ) {
+						if( CompTypeNum == SimAirServingZones::WaterCoil_SimpleCool || CompTypeNum == SimAirServingZones::WaterCoil_Cooling || CompTypeNum == SimAirServingZones::WaterCoil_DetailedCool ||  CompTypeNum == SimAirServingZones::WaterCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXCoil_CoolingHXAsst || CompTypeNum == SimAirServingZones::DXSystem ||  CompTypeNum == SimAirServingZones::CoilUserDefined ) {
 							FoundCentralCoolCoil = true;
 							this->mainCoolingCoilInletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumIn;
 							this->mainCoolingCoilOutletNodeIndex = DataAirSystems::PrimaryAirSystem( loopIndex ).Branch( BranchNum ).Comp( CompNum ).NodeNumOut;

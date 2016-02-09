@@ -138,7 +138,7 @@ public:
 		SystemTimestepObject tmpSysStepStamp
 	);
 
-	void AverageSysTimeSteps();
+	void AverageSysTimeSteps(); // tells the log to process the system timesteps into zone timesteps.
 
 	void ProcessRunningAverage();
 
@@ -147,6 +147,9 @@ public:
 	Real64 GetLogVariableDataAtTimestamp(
 		ZoneTimestepObject tmpztStepStamp
 	);
+
+	std::vector< Real64 > getLogVariableVector(); // return a vector of the log values from the zone timestep
+
 
 	void ReInitLogForIteration();
 
@@ -170,6 +173,7 @@ class SizingLoggerFramework
 {
 public:
 	std::vector <SizingLog> logObjs;
+
 	int SetupVariableSizingLog(
 		Real64 & rVariable,
 		int stepsInAverage

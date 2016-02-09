@@ -221,19 +221,6 @@ namespace EnergyPlus {
 				a.mainCCoilOutTempDB_LogIndex   = sizingLogger.SetupVariableSizingLog( DataLoopNode::Node( a.mainCoolingCoilOutletNodeIndex ).Temp, a.numTimeStepsInAvg);
 
 			}
-
-			//	a.mainCoolingCoilOutletNodeIndex = 
-
-			//	a.mainCCoilOutEnthalpy_LogIndex = sizingLogger.SetupVariableSizingLog( );
-
-
-	///		}
-			
-
-			// find main cooling coil 
-
-
-
 		
 		}
 
@@ -252,10 +239,6 @@ namespace EnergyPlus {
 		int const HVACSizingIterCount
 	)
 	{
-		using namespace DataPlant;
-		using namespace PlantManager;
-		using namespace DataSizing;
-		using DataGlobals::FinalSizingHVACSizingSimIteration;
 
 		//first pass through coincident plant objects to check new sizes and see if more iteration needed
 		plantCoinAnalyRequestsAnotherIteration = false;
@@ -277,9 +260,41 @@ namespace EnergyPlus {
 		}
 
 		// as more sizing adjustments are added this will need to change to consider all not just plant coincident
-		FinalSizingHVACSizingSimIteration = plantCoinAnalyRequestsAnotherIteration;
+		DataGlobals::FinalSizingHVACSizingSimIteration = plantCoinAnalyRequestsAnotherIteration;
 
 	}
+
+	void HVACSizingSimulationManager::processAirLoopAdjustments( 
+		int const HVACSizingIterCount 
+	)
+	{
+		airLoopSizingAdjustAnalyRequestsAnotherIteration = false;
+		for ( auto & a : airLoopAdjustAnalyObjs ) {
+
+			if ( a.mainCoilLogged ) {
+		
+				std::vector< Real64> inHvec = sizingLogger.logObjs[ a.mainCCoilInEnthalpy_LogIndex ].getLogVariableVector();
+
+				std::vector< Real64 > outHvec = sizingLogger.logObjs[ a.mainCCoilOutEnthalpy_LogIndex ].getLogVariableVector();
+
+				std::vector< Real64 > mdotVec = sizingLogger.logObjs[ a.mainCCoilInMdot_LogIndex ].getLogVariableVector();
+
+				std::vector< Real64 > qdotVec;
+
+				for ( std::size_t i = 0; i < inHvec.size(); ++i ) {
+					qdotVec[ i ] = mdotVec[ i ] * ( inHvec[i] - outHvec[ i ] );
+				}
+				Real64 maxCoolingLoad = *std::min_element( qdotVec.begin(), qdotVec.end() ) ;
+
+			}
+
+
+
+
+		
+		}
+	}
+
 	void HVACSizingSimulationManager::RedoKickOffAndResize()
 	{
 		using DataGlobals::KickOffSimulation;
@@ -479,6 +494,8 @@ namespace EnergyPlus {
 
 
 			hvacSizingSimulationManager->PostProcessLogs();
+
+			hvacSizingSimulationManager->processAirLoopAdjustments( HVACSizingIterCount );
 
 			hvacSizingSimulationManager->ProcessCoincidentPlantSizeAdjustments( HVACSizingIterCount );
 

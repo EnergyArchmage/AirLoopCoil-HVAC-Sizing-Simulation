@@ -114,6 +114,10 @@ public:
 		int const HVACSizingIterCount
 	);
 
+	void processAirLoopAdjustments(
+		int const HVACSizingIterCount
+	);
+
 	void UpdateSizingLogsZoneStep();
 	void UpdateSizingLogsSystemStep();
 
