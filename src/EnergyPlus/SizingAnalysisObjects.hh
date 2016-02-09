@@ -273,6 +273,9 @@ private:
 
 class AirLoopSizingAnalsysis
 {
+
+
+
 	public:
 		enum SizingAnalysisTypeEnum {
 			mainCoolingCoilLeavingHumRat, // modify the humidity ratio expected after the main cooling coil
@@ -299,7 +302,10 @@ class AirLoopSizingAnalsysis
 		int mainCCoilInMdot_LogIndex = 0; // main cooling coil outlet mass flow rate storage index for vector of log objects in the logger framework
 		int mainCoolingCoilInletNodeIndex = 0; // first main cooling coil found on main branch.
 
-		ZoneTimestepObject newFoundMainCoilOutHumRat;
+		Real64 previousMainCoilOutHumRat = 0.0;
+
+		ZoneTimestepObject newFoundMainCoilOutHumRatTimeStamp;
+		Real64 newFoundMainCoilOutHumRat = 0.0;
 
 		bool oaCoilLogged = false;
 		int oaCCoilOutEnthalpy_LogIndex = 0;  // main cooling coil outlet enthalpy storage index for vector of log objects in the logger framework
@@ -315,13 +321,15 @@ class AirLoopSizingAnalsysis
 		int oaCoolingCoilInletNodeIndex = 0; // first main cooling coil found on main branch.
 
 
+private :
+		static bool airLoopSizingEIOHeaderDoneOnce;
 
 protected: // data
 
 
-
+		
 		std::string airLoopName = "";
-
+		Real64 significantNormalizedChange = 0.005; // criteria for if sizing algorithm yeild a change large enough worth making another pass.
 
 		std::string mainCoolingCoilName  = "";
 
@@ -338,7 +346,9 @@ protected: // data
 			SizingAnalysisTypeEnum analysisType
 		);
 
-
+		void resolveMainCoilOutletHumidityRatio(
+			int const HVACSizingIterCount
+		);
 };
 
 

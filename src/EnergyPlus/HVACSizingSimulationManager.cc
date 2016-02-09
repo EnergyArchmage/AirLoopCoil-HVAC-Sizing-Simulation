@@ -300,9 +300,9 @@ namespace EnergyPlus {
 
 				Real64 newHumRat = coilProcVec[ maxCoolingIndex ].outW;
 
-				a.newFoundMainCoilOutHumRat = sizingLogger.logObjs[ a.mainCCoilOutHumRat_LogIndex ].getLogVariableDataAtIndex( maxCoolingIndex );
+				a.newFoundMainCoilOutHumRatTimeStamp = sizingLogger.logObjs[ a.mainCCoilOutHumRat_LogIndex ].getLogVariableDataAtIndex( maxCoolingIndex );
 
-
+				a.resolveMainCoilOutletHumidityRatio( HVACSizingIterCount );
 
 
 
