@@ -521,7 +521,7 @@ namespace EnergyPlus {
 
 			hvacSizingSimulationManager->RedoKickOffAndResize();
 
-			if ( ! hvacSizingSimulationManager->plantCoinAnalyRequestsAnotherIteration ) {
+			if ( ! hvacSizingSimulationManager->plantCoinAnalyRequestsAnotherIteration && ! hvacSizingSimulationManager->airLoopSizingAdjustAnalyRequestsAnotherIteration ) {
 				// jump out of for loop, or change for to a while
 				break;
 			}

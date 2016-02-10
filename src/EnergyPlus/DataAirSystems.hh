@@ -509,6 +509,13 @@ namespace DataAirSystems {
 	};
 
 	// Object Data
+	extern bool AirSystemFirstSizesCompleted;
+	extern bool AirSystemFirstSizesOkayToFinalize;
+	extern bool AirSystemFirstSizesOkayToReport;
+	extern bool AirSystemFinalSizesOkayToReport;
+	extern bool AirSystemReSizingCompleted;
+
+
 	extern Array1D< DefinePrimaryAirSystem > PrimaryAirSystem;
 	extern Array1D< ConnectionPoint > DemandSideConnect; // Connections between loops
 	extern Array1D< ConnectZoneComp > ZoneCompToPlant; // Connections between loops

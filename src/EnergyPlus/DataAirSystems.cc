@@ -105,6 +105,12 @@ namespace DataAirSystems {
 	// Temporary arrays
 
 	// Object Data
+	bool AirSystemFirstSizesCompleted( false );
+	bool AirSystemFirstSizesOkayToFinalize( false );
+	bool AirSystemFirstSizesOkayToReport( false );
+	bool AirSystemFinalSizesOkayToReport( false );
+	bool AirSystemReSizingCompleted( false );
+
 	Array1D< DefinePrimaryAirSystem > PrimaryAirSystem;
 	Array1D< ConnectionPoint > DemandSideConnect; // Connections between loops
 	Array1D< ConnectZoneComp > ZoneCompToPlant; // Connections between loops

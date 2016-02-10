@@ -996,7 +996,9 @@ namespace WaterCoils {
 			}
 			PlantLoopScanFlag( CoilNum ) = false;
 		}
+
 		if ( ! SysSizingCalc && MySizeFlag( CoilNum ) ) {
+
 			// for each coil, do the sizing once.
 			SizeWaterCoil( CoilNum );
 
