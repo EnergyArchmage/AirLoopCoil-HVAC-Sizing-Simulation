@@ -997,7 +997,7 @@ namespace WaterCoils {
 			PlantLoopScanFlag( CoilNum ) = false;
 		}
 
-		if ( ! SysSizingCalc && MySizeFlag( CoilNum ) ) {
+		if ( ! SysSizingCalc && MySizeFlag( CoilNum ) || DataGlobals::RedoSizesHVACSimulation ) {
 
 			// for each coil, do the sizing once.
 			SizeWaterCoil( CoilNum );
@@ -1775,7 +1775,13 @@ namespace WaterCoils {
 					DataDesOutletAirHumRat = PsyWFnTdbRhPb( DataDesOutletAirTemp, 0.9, StdBaroPress, RoutineName );
 				}
 
-				SizingString = "Design Coil Load [W]"; // there is no input field for this value and this is not the rated capacity (we should always print this!)
+				if ( DataAirSystems::AirSystemFinalSizesOkayToReport ) {
+					SizingString = "Design Coil Load [W]"; // there is no input field for this value and this is not the rated capacity (we should always print this!)				
+				} 
+				if ( DataAirSystems::AirSystemFirstSizesOkayToReport ) {
+					SizingString = "Initial Design Coil Load [W]"; 
+				}
+
 				RequestSizing( CompType, CompName, CoolingCapacitySizing, SizingString, TempSize, bPRINT, RoutineName );
 				WaterCoil( CoilNum ).DesWaterCoolingCoilRate = TempSize;
 				WaterCoil( CoilNum ).InletAirMassFlowRate = StdRhoAir * DataFlowUsedForSizing; // inlet air mass flow rate is the autosized value

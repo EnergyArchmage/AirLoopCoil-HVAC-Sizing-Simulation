@@ -1908,8 +1908,11 @@ namespace SimAirServingZones {
 
 		// Size the air loop branch air flows
 
-		if ( ! SysSizingCalc && InitAirLoopsBranchSizingFlag ) {
-
+		// first pass
+		if ( ! SysSizingCalc && ! DataAirSystems::AirSystemFirstSizesCompleted )  {
+	//	if ( ! SysSizingCalc && InitAirLoopsBranchSizingFlag ) { 
+			DataAirSystems::AirSystemFirstSizesOkayToFinalize = true;
+			DataAirSystems::AirSystemFirstSizesOkayToReport   = true;
 			for ( AirLoopNum = 1; AirLoopNum <= NumPrimaryAirSys; ++AirLoopNum ) {
 
 				for ( BranchNum = 1; BranchNum <= PrimaryAirSystem( AirLoopNum ).NumBranches; ++BranchNum ) {
@@ -1917,8 +1920,6 @@ namespace SimAirServingZones {
 				}
 
 			}
-
-			InitAirLoopsBranchSizingFlag = false;
 
 			// calculate the ratio of air loop design flow to the sum of the zone design flows
 			for ( AirLoopNum = 1; AirLoopNum <= NumPrimaryAirSys; ++AirLoopNum ) {
@@ -1934,6 +1935,45 @@ namespace SimAirServingZones {
 				}
 			}
 
+			DataAirSystems::AirSystemFirstSizesCompleted = true ;
+			DataAirSystems::AirSystemFirstSizesOkayToReport   = false;
+		} // end first pass sizing init
+
+		if ( RedoSizesHVACSimulation && ! AirSystemReSizingCompleted ) {
+			// not really anthing to call here because we are not yet adjusting flow rates.
+			DataAirSystems::AirSystemFinalSizesOkayToReport = true;
+			for ( AirLoopNum = 1; AirLoopNum <= NumPrimaryAirSys; ++AirLoopNum ) {
+
+				for ( BranchNum = 1; BranchNum <= PrimaryAirSystem( AirLoopNum ).NumBranches; ++BranchNum ) {
+					SizeAirLoopBranches( AirLoopNum, BranchNum );
+				}
+
+			}
+
+			// calculate the ratio of air loop design flow to the sum of the zone design flows
+			for ( AirLoopNum = 1; AirLoopNum <= NumPrimaryAirSys; ++AirLoopNum ) {
+				SumZoneDesFlow = 0.0;
+				for ( ZoneInSysIndex = 1; ZoneInSysIndex <= AirToZoneNodeInfo( AirLoopNum ).NumZonesCooled; ++ZoneInSysIndex ) {
+					TUInNode = AirToZoneNodeInfo( AirLoopNum ).TermUnitCoolInletNodes( ZoneInSysIndex );
+					SumZoneDesFlow += Node( TUInNode ).MassFlowRateMax;
+				}
+				if ( SumZoneDesFlow > VerySmallMassFlow ) {
+					AirLoopFlow( AirLoopNum ).SysToZoneDesFlowRatio = PrimaryAirSystem( AirLoopNum ).DesignVolFlowRate * StdRhoAir / SumZoneDesFlow;
+				} else {
+					AirLoopFlow( AirLoopNum ).SysToZoneDesFlowRatio = 1.0;
+				}
+			}
+
+			// call all the components to trigger resizing
+			for ( AirLoopNum = 1; AirLoopNum <= NumPrimaryAirSys; ++AirLoopNum ) { // Start looping through all of the air loops...
+				DataSizing::CurSysNum = AirLoopNum;
+
+				SimAirLoopComponents( AirLoopNum, true );
+
+
+			}
+
+			DataAirSystems::AirSystemFinalSizesOkayToReport = false;
 		}
 
 		// Do the Begin Environment initializations
